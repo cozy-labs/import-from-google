@@ -13,16 +13,17 @@
   "main": "server.coffee",
   "dependencies": {
     "americano": "0.3.11",
-    "cozydb": "0.0.12",
-    "request-json": "0.5.3",
-    "jade": "1.9.1",
-    "gdata-js": "3.0.1",
-    "googleapis": "2.0.2",
-    "lodash": "^3.8.0",
     "async": "^0.9.0",
+    "cozydb": "0.0.12",
+    "gdata-js": "3.0.1",
     "gm": "1.17.0",
+    "googleapis": "2.0.2",
+    "imagemagick-stream": "^2.0.0",
+    "jade": "1.9.1",
+    "lodash": "^3.8.0",
     "moment-timezone": "^0.3.1",
     "printit": "0.1.3",
+    "request-json": "0.5.3",
     "socket.io": "1.3.5"
   },
   "devDependencies": {
@@ -31,13 +32,12 @@
     "cozy-fixtures": "1.1.1",
     "coffeelint": "^1.9.6",
     "parallelshell": "^1.1.1",
-    "coffee-script": "^1.8.0",
     "coffee-jshint": "^0.2.2"
   },
   "scripts": {
     "test": "mocha tests -c -R spec --compilers coffee:coffee-script/register",
     "start": "node build/server.js",
-    "lint": "coffeelint -f coffeelint.json server",
+    "lint": "npm run lint1 && npm run lint2",
     "build:server1": "coffee -cb --output build/server server",
     "build:server2": "coffee -cb --output build/ server.coffee",
     "build:jade1": "jade -o build/server/views -c -n \"t\" server/views/index.jade",
@@ -51,10 +51,9 @@
     "build": "npm run build:server && npm run build:client",
     "lint1": "coffee-jshint -o node server/**/*.coffee",
     "lint2": "coffeelint server",
-    "lint": "npm run lint1 && npm run lint2",
     "dev": "parallelshell 'cd client && brunch w' 'coffee server.coffee'"
   },
-  "icon-path":"icon.svg",
+  "icon-path": "icon.svg",
   "cozy-permissions": {
     "Album": {
       "description": "Import photos albums"
