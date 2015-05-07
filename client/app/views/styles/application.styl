@@ -1,0 +1,144 @@
+// nib is a powerful lib for stylus that provides cross-browser css3 mixins.
+@import 'nib'
+
+@import '_base'
+@import '_ui'
+
+// Import your styles here
+
+@import '_states'
+@import '_layout'
+@import '_responsive'
+
+body
+    display flex
+    padding 0px
+    margin 0px
+    background-color #57BFF0 + 40%
+
+input[type=text], select
+    background: #fff
+    font-family: 'Maven Pro', sans-serif
+    text-align: left
+    font-size: 20px
+    height: 40px
+    width: 250px
+    padding 0 10px
+    -webkit-border-radius: 0.4em
+    border-radius: 0.4em
+    border: 0
+    color: #15a7c7
+    -webkit-box-shadow: 0 0 0 0
+    box-shadow: 0 0 0 0
+    border: 1px solid #fff
+    -webkit-transition: all 0.2s
+    -moz-transition: all 0.2s
+    -o-transition: all 0.2s
+    -ms-transition: all 0.2s
+    transition: all 0.2s
+    text-align center
+
+input:hover, select:hover
+    border: 1px solid #15a7c7
+
+input:focus, select:focus
+    color: #ff850a
+    -webkit-box-shadow: 0 0 0 0
+    box-shadow: 0 0 0 0
+    border: 1px solid #ffc285
+    outline none
+
+.btn, .btn:visited
+    display inline-block
+    background: #15a7c7
+    border: 1px #11869f
+    font-family: 'Source Sans Pro', sans-serif
+    color: #fff
+    padding: 5px
+    -webkit-border-radius: 4px
+    border-radius: 4px
+    cursor: pointer
+    -webkit-transition: all 0.3s
+    -moz-transition: all 0.3s
+    -o-transition: all 0.3s
+    -ms-transition: all 0.3s
+    transition: all 0.3s
+    text-align: center
+    outline: none
+
+    &:hover
+        color: #fff
+        background: #ff850a
+        border-color: 1px solid #ff850a
+        text-decoration none
+        color: #fff
+    &:active
+        -webkit-box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset, 0 0 0
+        box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset, 0 0 0
+        background: #ef7800
+        color: #fff
+
+#leave-google-log a.btn
+    display block
+    margin-top 40px
+    font-size 1.5em
+
+#leave-google, #leave-google-log
+    margin auto
+    background: #f2f2f2
+    width 100%
+    max-width 600px
+    border-radius 20px
+    box-shadow 0px 0px 5px #aaa;
+
+    h1
+        border-top-right-radius 20px
+        border-top-left-radius 20px
+        padding 30px
+        margin 0px
+        text-align center
+        background: #363a46
+        color: #fff
+
+    .content
+        padding 30px
+        clear both
+
+        #step-bigbutton a.btn
+            display block
+            font-weight bold
+            margin auto
+            width 90%
+            font-size 2em
+
+        #step-pastecode
+            input#auth_code
+                width 100%
+
+            a.btn
+                float right
+                margin 30px
+                padding 10px
+                margin-right 10px
+                font-size 1.5em
+
+                &#step-pastecode-ko
+                    background-color transparent
+                    color #15a7c7
+
+        #step-pickscope
+            label
+                display inline-block
+                margin-bottom 15px
+                margin-right 40px
+                input
+                    float left
+                    margin-right 10px
+
+            #lg-login
+                display block
+                width 100%
+                margin auto
+                margin-top 20px
+                padding 10px
+

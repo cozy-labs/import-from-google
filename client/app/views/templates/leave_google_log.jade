@@ -1,0 +1,34 @@
+if photos.processing || contacts.processing || events.processing
+    h1.pa2.matop0.biggest.darkbg.center Importation en cours ...
+else
+    h1.pa2.matop0.biggest.darkbg.center Importation terminée
+div.content
+    p Connexion à l'API de Google.
+    if photos.numberPhotos
+        div
+            if photos.processing
+                p Importation des photos en cours
+            else
+                p Importation des photos terminée
+            p= photos.numberPhotos + " photos importées dans " + photos.numberAlbum + " album(s)"
+            for url in photos.error
+                p= "Importation impossible : " + url
+    if events.number
+        div
+            if events.processing
+                p Importation des calendriers en cours
+            else
+                p Importation des calendriers terminée
+            p= events.number + " evenements importés sur " + events.total
+    if contacts.number
+        div
+            if contacts.processing
+                p Importation des contacts en cours
+            else
+                p Importation des contacts terminée
+            p= contacts.number + " contacts importés"
+    if invalidToken
+        div.error=t('leave google invalid token')
+
+    unless photos.processing || contacts.processing || events.processing
+        a.btn(href="/", target="_top")=t('back to home')
