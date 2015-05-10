@@ -7,6 +7,7 @@ html,
 body {
   height: 100%;
   width: 100%;
+  font-family: 'Source Sans Pro';
 }
 body {
   text-rendering: optimizeLegibility;
@@ -14,7 +15,6 @@ body {
 body,
 input {
   color: #444;
-  font: 300 16px Geneva, Verdana, "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   line-height: 1.2;
 }
 a,
@@ -25,6 +25,12 @@ a:visited {
 a:hover,
 a:visited:hover {
   text-decoration: underline;
+}
+h4 {
+  margin: 40px 0 0 0;
+  border-bottom: 1px solid #ccc;
+  font-weight: normal;
+  font-size: 28px;
 }
 .ui-button,
 a.ui-button,
@@ -191,15 +197,9 @@ cursor not-allowed {
   }
 }
 body {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: box;
-  display: flex;
   padding: 0px;
   margin: 0px;
-  background-color: #9ad9f6;
+  background-color: #f6eee2;
 }
 input[type=text],
 select {
@@ -290,37 +290,54 @@ select:focus {
 }
 #leave-google,
 #leave-google-log {
-  margin: auto;
-  background: #f2f2f2;
+  margin: 70px auto 10px auto;
+  padding: 20px;
+  background: #fcf9f5;
+  height: auto;
   width: 100%;
   max-width: 600px;
   -webkit-border-radius: 20px;
   border-radius: 20px;
-  -webkit-box-shadow: 0px 0px 5px #aaa;
-  box-shadow: 0px 0px 5px #aaa;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 #leave-google h1,
 #leave-google-log h1 {
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
-  padding: 30px;
-  margin: 0px;
+  font-size: 30px;
   text-align: center;
-  background: #363a46;
-  color: #fff;
+  margin: 10px 0;
+}
+#leave-google p,
+#leave-google-log p {
+  font-size: 18px;
+  font-weight: normal;
+  margin: 30px 0;
 }
 #leave-google .content,
 #leave-google-log .content {
-  padding: 30px;
   clear: both;
 }
+#leave-google .content .step-number,
+#leave-google-log .content .step-number {
+  text-align: center;
+  margin: 20px auto 40px auto;
+  width: 70px;
+  color: #fcf9f5;
+  font-size: 40px;
+  -webkit-border-radius: 100px;
+  border-radius: 100px;
+  padding: 10px;
+  font-family: 'Maven Pro';
+  background-color: #4a4444;
+}
+#leave-google .content #back-button,
+#leave-google-log .content #back-button,
 #leave-google .content #step-bigbutton a.btn,
 #leave-google-log .content #step-bigbutton a.btn {
   display: block;
   font-weight: bold;
   margin: auto;
-  width: 90%;
-  font-size: 2em;
+  width: 100%;
+  font-size: 1.6em;
 }
 #leave-google .content #step-pastecode input#auth_code,
 #leave-google-log .content #step-pastecode input#auth_code {
@@ -328,11 +345,12 @@ select:focus {
 }
 #leave-google .content #step-pastecode a.btn,
 #leave-google-log .content #step-pastecode a.btn {
-  float: right;
-  margin: 30px;
-  padding: 10px;
-  margin-right: 10px;
-  font-size: 1.5em;
+  display: block;
+  font-weight: bold;
+  margin: auto;
+  width: 100%;
+  font-size: 1.6em;
+  margin-top: 10px;
 }
 #leave-google .content #step-pastecode a.btn#step-pastecode-ko,
 #leave-google-log .content #step-pastecode a.btn#step-pastecode-ko {
@@ -357,6 +375,7 @@ select:focus {
   margin: auto;
   margin-top: 20px;
   padding: 10px;
+  font-size: 1.6em;
 }
 
 .chromeframe { margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0; }
