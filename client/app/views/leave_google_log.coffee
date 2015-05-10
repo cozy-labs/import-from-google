@@ -11,10 +11,12 @@ module.exports = class LeaveGoogleLogView extends BaseView
             processing: true
             numberPhotos: 0
             numberAlbum: 0
+            total: 0
             error: []
         contacts:
             processing: true
             number:0
+            total: 0
         events:
             processing: true
             number:0
@@ -33,6 +35,7 @@ module.exports = class LeaveGoogleLogView extends BaseView
         window.sio.on "photos.photo", (data) =>
             console.log "photos.photo", data.number
             @model.photos.numberPhotos = data.number
+            @model.photos.total = data.total
             @render()
         window.sio.on "calendars", (data)=>
             console.log "calendars", data.number
@@ -42,6 +45,7 @@ module.exports = class LeaveGoogleLogView extends BaseView
         window.sio.on "contacts", (data) =>
             console.log "contacts", data.number
             @model.contacts.number = data.number
+            @model.contacts.total = data.total
             @render()
         window.sio.on "events.end", =>
             console.log "calendars done"

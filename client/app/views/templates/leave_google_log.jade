@@ -1,34 +1,37 @@
 if photos.processing || contacts.processing || events.processing
-    h1.pa2.matop0.biggest.darkbg.center Importation en cours ...
+    h1.pa2.matop0.biggest.darkbg.center= t('import running')
 else
-    h1.pa2.matop0.biggest.darkbg.center Importation terminée
+    h1.pa2.matop0.biggest.darkbg.center= t('import complete')
 div.content
-    p Connexion à l'API de Google.
     if photos.numberPhotos
         div
             if photos.processing
-                p Importation des photos en cours
+                h4= t('import photo running')
             else
-                p Importation des photos terminée
-            p= photos.numberPhotos + " photos importées dans " + photos.numberAlbum + " album(s)"
+                h4= t('import photo complete')
+            div(style="height: 3px; background: #8D6E63; width: #{(photos.numberPhotos/photos.total) * 100}%")
+            p= photos.numberPhotos + t("import amount photos") + photos.total
             for url in photos.error
-                p= "Importation impossible : " + url
+                p= t("import album failure") + url
     if events.number
         div
             if events.processing
-                p Importation des calendriers en cours
+                h4= t('import calendar running')
             else
-                p Importation des calendriers terminée
-            p= events.number + " evenements importés sur " + events.total
+                h4= t('import calendar complete')
+            div(style="height: 3px; background: #8D6E63; width:#{(events.number/events.total) * 100}%")
+            p= events.number + t("import amount events") + events.total
     if contacts.number
         div
             if contacts.processing
-                p Importation des contacts en cours
+                h4= t('import contact running')
             else
-                p Importation des contacts terminée
-            p= contacts.number + " contacts importés"
+                h4= t('import contact complete')
+            div(style="height: 3px; background: #8D6E63; width:#{(contacts.number/contacts.total) * 100}%")
+            p= contacts.number + t("import amount contacts") + contacts.total
     if invalidToken
         div.error=t('leave google invalid token')
 
     unless photos.processing || contacts.processing || events.processing
-        a.btn(href="/", target="_top")=t('back to home')
+        p= t('import success message')
+        a.btn#back-button(href="/", target="_top")=t('back to home')

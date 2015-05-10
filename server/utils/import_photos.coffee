@@ -13,6 +13,7 @@ Album = require '../models/album'
 Photo = require '../models/photo'
 i = 0
 
+
 #errUrl is an array with url of photos not saved
 errUrl = []
 
@@ -23,6 +24,19 @@ addUrlErr = (url)->
 PICASSA_URL = "https://picasaweb.google.com/data/feed/api/"
 ALBUMS_URL = "#{PICASSA_URL}user/default"
 numberPhotosProcessed = 0
+total = 0
+
+
+getTotal = (albums, callback) ->
+    async.eachSeries albums, (gAlbum, next) ->
+        albumFeedUrl = "#{ALBUMS_URL}/albumid/#{gAlbum.gphoto$id.$t}?alt=json"
+        log.debug albumFeedUrl
+        log.debug "get photos total (album length to add to total)"
+        gdataClient.getFeed albumFeedUrl, (err, photos) ->
+            total += photos.feed.entry.length
+            log.debug "photo total: #{total}"
+            next()
+    , callback
 
 importAlbum = (gAlbum, done) ->
     albumToCreate =
@@ -47,7 +61,9 @@ importPhotos = (cozyAlbumId, gAlbum, done) ->
             importOnePhoto cozyAlbumId, gPhoto, (err) ->
                 log.debug "done with 1 photo"
                 log.error err if err
-                realtimer.sendPhotosPhoto number: ++numberPhotosProcessed
+                realtimer.sendPhotosPhoto
+                    number: ++numberPhotosProcessed
+                    total: total
                 next null # loop anyway
         , done
 
@@ -114,14 +130,13 @@ module.exports = (access_token, done)->
         log.debug "got list err=#{err}"
         numberAlbumProcessed = 0
         numberPhotosProcessed = 0
-        async.eachSeries feed.feed.entry, (gAlbum, next) ->
-            importAlbum gAlbum, (err) ->
-                log.debug "done with 1 album"
-                log.error err if err
-                realtimer.sendPhotosAlbum number: ++numberAlbumProcessed
-                next null # loop anyway
-
-        , done
-
-
+        total = 0
+        getTotal feed.feed.entry, ->
+            async.eachSeries feed.feed.entry, (gAlbum, next) ->
+                importAlbum gAlbum, (err) ->
+                    log.debug "done with 1 album"
+                    log.error err if err
+                    realtimer.sendPhotosAlbum number: ++numberAlbumProcessed
+                    next null # loop anyway
+            , done
 

@@ -10,6 +10,8 @@ url = require 'url'
 access_token = null
 
 numberProcessed = 0
+total = 0
+
 createContact = (gContact, callback) ->
     log.debug "import 1 contact"
     toCreate = new Contact Contact.fromGoogleContact gContact
@@ -19,7 +21,9 @@ createContact = (gContact, callback) ->
     Contact.request 'byName', key: name, (err, contacts) ->
         if err
             numberProcessed += 1
-            realtimer.sendContacts number: numberProcessed
+            realtimer.sendContacts
+                number: numberProcessed
+                total: contact
             log.debug "err #{err}"
             callback null
         else if contacts.length is 0
@@ -32,10 +36,14 @@ createContact = (gContact, callback) ->
                     log.debug "picture err #{err}"
                     setTimeout callback, 100
             numberProcessed += 1
-            realtimer.sendContacts number: numberProcessed
+            realtimer.sendContacts
+                number: numberProcessed
+                total: total
         else
             numberProcessed += 1
-            realtimer.sendContacts number: numberProcessed
+            realtimer.sendContacts
+                number: numberProcessed
+                total: total
             log.debug "existing #{name}"
             callback null
 
@@ -102,4 +110,5 @@ module.exports = (token, callback) ->
     listContacts (err, contacts)->
         return callback err if err
         log.debug "got #{contacts.length} contacts"
+        total = contacts.length
         async.eachSeries contacts, createContact, callback

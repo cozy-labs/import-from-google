@@ -1,24 +1,27 @@
-h1= t('leave google title')
 div.content
+    h1= t('leave google title')
     section.step#step-bigbutton
-        h5=t("leave google step1 title")
+        p=t("leave google intro")
+        .step-number 1
+        p=t("leave google step1 title")
         a.btn#connect-google(title=t("leave google connect label"))
             =t("leave google connect label")
 
     section.step#step-pastecode
-        h5=t("leave google step2 title")
+        .step-number 2
+        p=t("leave google step2 title")
         form
             input#auth_code(type="text", name="auth_code",
                   placeholder="google auth_code", required)
             a#step-pastecode-ok.btn= t('confirm')
-            a#step-pastecode-ko.btn= t('cancel')
 
     section.step#step-pickscope
-        h5=t('leave google choice title')
+        .step-number 3
+        p=t('leave google choice title')
         label=t("leave google choice photo")
             input(type="checkbox", name="photos", value="photos", checked)
         label=t("leave google choice calendar")
             input(type="checkbox", name="calendars", value="calendars", checked)
         label=t("leave google choice contact")
             input(type="checkbox", name="contacts", value="contacts", checked)
-        a#lg-login.btn=t('leave google')
+        a#lg-login.btn=t('leave google title')
