@@ -86,7 +86,9 @@ listContacts = (callback) ->
         port: 443
         path: '/m8/feeds/contacts/default/full?alt=json&max-results=10000'
         method: 'GET'
-        headers: 'Authorization': 'Bearer ' + access_token
+        headers:
+            'Authorization': 'Bearer ' + access_token
+            'GData-Version': '3.0'
 
     req = https.request opts, (res) ->
         data = []
