@@ -29,6 +29,9 @@ div.content
                 h4= t('import contact complete')
             div(style="height: 3px; background: #8D6E63; width:#{(contacts.number/contacts.total) * 100}%")
             p= contacts.number + t("import amount contacts") + contacts.total
+    if syncedGmail
+        div
+            h4= t('gmail account synced')
     if invalidToken
         div.error=t('leave google invalid token')
 

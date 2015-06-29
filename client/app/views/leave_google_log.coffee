@@ -21,6 +21,7 @@ module.exports = class LeaveGoogleLogView extends BaseView
             processing: true
             number:0
             total: 0
+        syncedGmail: false
 
     initialize: ->
         window.sio.on "photos.album", (data) =>
@@ -58,6 +59,10 @@ module.exports = class LeaveGoogleLogView extends BaseView
         window.sio.on "photos.end", =>
             console.log "photos done"
             @model.photos.processing = false
+            @render()
+        window.sio.on "syncGmail.end", =>
+            console.log "syncGmail done"
+            @model.syncedGmail = true
             @render()
 
         window.sio.on 'invalid token', =>

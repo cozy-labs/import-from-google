@@ -12,6 +12,10 @@ access_token = null
 numberProcessed = 0
 total = 0
 
+NotificationHelper = require 'cozy-notifications-helper'
+notification = new NotificationHelper 'leave-google'
+
+
 createContact = (gContact, callback) ->
     log.debug "import 1 contact"
     toCreate = new Contact Contact.fromGoogleContact gContact
@@ -111,4 +115,13 @@ module.exports = (token, callback) ->
         return callback err if err
         log.debug "got #{contacts.length} contacts"
         total = contacts.length
-        async.eachSeries contacts, createContact, callback
+        async.eachSeries contacts, createContact, (err)->
+            callback err if err
+            console.log "create notification for contacts"
+            notification.createOrUpdatePersistent "leave-google-contacts",
+                app: 'leave-google'
+                text: "Importation de #{total} contacts terminé"
+                resource:
+                    app: 'contacts'
+                    url: 'contacts/'
+

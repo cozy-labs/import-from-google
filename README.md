@@ -1,6 +1,6 @@
 # Description
 
-Import all your goole contacts, events and photos
+Import all your google contacts, events and photos
 
 # What is Cozy?
 

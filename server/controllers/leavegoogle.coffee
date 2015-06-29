@@ -3,7 +3,7 @@ importContacts = require '../utils/import_contacts'
 importPhotos = require '../utils/import_photos'
 importCalendar = require '../utils/import_calendar'
 realtimer = require '../utils/realtimer'
-
+syncGmail = require '../utils/sync_gmail'
 async = require 'async'
 log = require('printit')('leaveGcontroller')
 
@@ -49,6 +49,12 @@ module.exports.lg = (req, res, next) ->
                 importContacts tokens.access_token, (err)->
                     realtimer.sendContactsErr err if err
                     realtimer.sendEnd "contacts.end"
+                    callback null
+
+            (callback)->
+                return callback null unless scope.sync_gmail is 'true'
+                syncGmail tokens.access_token, tokens.refresh_token, (err)->
+                    realtimer.sendEnd "syncGmail.end"
                     callback null
         ], (err)->
             log.debug "leave google complete"

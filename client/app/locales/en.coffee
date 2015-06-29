@@ -11,6 +11,7 @@ module.exports =
     "leave google choice photo": "Photos"
     "leave google choice calendar": "Calendars"
     "leave google choice contact": "Contacts"
+    "leave google choice sync gmail": "Gmail sync"
     "invalid token": "The token is invalid, please restart the process from the beginning."
     "import running": "Import running..."
     "import complete": "Import complete!"
@@ -25,4 +26,5 @@ module.exports =
     "import amount events": " imported events on "
     "import amount contacts": " imported contacts on "
     "import success message": "Congratulations, all your Google data were properly imported in your Cozy! Now, you can browse and modify it via the main Cozy applications. Access to these apps through the Cozy Home:"
+    "gmail account synced": "Your Gmail account is now linked"
 

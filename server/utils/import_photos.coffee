@@ -13,6 +13,9 @@ Album = require '../models/album'
 Photo = require '../models/photo'
 i = 0
 
+NotificationHelper = require 'cozy-notifications-helper'
+notification = new NotificationHelper 'leave-google'
+
 
 #errUrl is an array with url of photos not saved
 errUrl = []
@@ -33,7 +36,8 @@ getTotal = (albums, callback) ->
         log.debug albumFeedUrl
         log.debug "get photos total (album length to add to total)"
         gdataClient.getFeed albumFeedUrl, (err, photos) ->
-            total += photos.feed.entry.length
+            next err if err
+            total += if photos then photos.feed.entry.length else 0
             log.debug "photo total: #{total}"
             next()
     , callback
@@ -138,5 +142,13 @@ module.exports = (access_token, done)->
                     log.error err if err
                     realtimer.sendPhotosAlbum number: ++numberAlbumProcessed
                     next null # loop anyway
-            , done
+            , (err)->
+                return done err if err
+
+                notification.createOrUpdatePersistent "leave-google-photos",
+                    app: 'leave-google'
+                    text: "Importation de #{numberPhotosProcessed} photos terminé"
+                    resource:
+                        app: 'photos'
+                        url: 'photos/'
 

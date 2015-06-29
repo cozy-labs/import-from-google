@@ -10,6 +10,10 @@ _ = require 'lodash'
 
 {oauth2Client} = require './google_access_token'
 
+NotificationHelper = require 'cozy-notifications-helper'
+notification = new NotificationHelper 'leave-google'
+
+
 getCalendarId = (callback) ->
     calendar.calendarList.list auth: oauth2Client, (err, response) ->
         return callback err if err
@@ -89,5 +93,16 @@ module.exports = (access_token, callback)->
                     realtimer.sendCalendar
                         number: ++numberProcessed
                         total: gEvents.length
-            , callback
+            , (err)->
+                callback err if err
+                console.log "create notification for events"
+
+                notification.createOrUpdatePersistent "leave-google-calendar",
+                    app: 'leave-google'
+                    text: "Importation de #{numberProcessed} évenements terminé"
+                    resource:
+                        app: 'calendar'
+                        url: 'calendar/'
+
+
 
