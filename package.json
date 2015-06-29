@@ -74,6 +74,9 @@
     },
     "Notification": {
       "description": "Add notification"
+    },
+    "Account": {
+      "description": "Add email account"
     }
   },
   "cozy-displayName": "Leave Google"
