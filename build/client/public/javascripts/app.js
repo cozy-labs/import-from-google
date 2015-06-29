@@ -329,6 +329,7 @@ module.exports = {
   "leave google choice photo": "Photos",
   "leave google choice calendar": "Calendars",
   "leave google choice contact": "Contacts",
+  "leave google choice sync gmail": "Gmail sync",
   "invalid token": "The token is invalid, please restart the process from the beginning.",
   "import running": "Import running...",
   "import complete": "Import complete!",
@@ -342,7 +343,8 @@ module.exports = {
   "import amount photos": " imported photos on ",
   "import amount events": " imported events on ",
   "import amount contacts": " imported contacts on ",
-  "import success message": "Congratulations, all your Google data were properly imported in your Cozy! Now, you can browse and modify it via the main Cozy applications. Access to these apps through the Cozy Home:"
+  "import success message": "Congratulations, all your Google data were properly imported in your Cozy! Now, you can browse and modify it via the main Cozy applications. Access to these apps through the Cozy Home:",
+  "gmail account synced": "Your Gmail account is now linked"
 };
 
 });
@@ -477,7 +479,8 @@ module.exports = LeaveGoogleView = (function(_super) {
     scope = {
       photos: this.$("input:checkbox[name=photos]").prop("checked"),
       calendars: this.$("input:checkbox[name=calendars]").prop("checked"),
-      contacts: this.$("input:checkbox[name=contacts]").prop("checked")
+      contacts: this.$("input:checkbox[name=contacts]").prop("checked"),
+      sync_gmail: this.$("input:checkbox[name=sync_gmail]").prop("checked")
     };
     $.post("lg", {
       auth_code: auth_code,
@@ -529,7 +532,8 @@ module.exports = LeaveGoogleLogView = (function(_super) {
       processing: true,
       number: 0,
       total: 0
-    }
+    },
+    syncedGmail: false
   };
 
   LeaveGoogleLogView.prototype.initialize = function() {
@@ -593,6 +597,13 @@ module.exports = LeaveGoogleLogView = (function(_super) {
         return _this.render();
       };
     })(this));
+    window.sio.on("syncGmail.end", (function(_this) {
+      return function() {
+        console.log("syncGmail done");
+        _this.model.syncedGmail = true;
+        return _this.render();
+      };
+    })(this));
     return window.sio.on('invalid token', (function(_this) {
       return function() {
         console.log("invalid token");
@@ -625,7 +636,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<div class=\"content\"><h1>" + (jade.escape(null == (jade_interp = t('leave google title')) ? "" : jade_interp)) + "</h1><section id=\"step-bigbutton\" class=\"step\"><p>" + (jade.escape(null == (jade_interp = t("leave google intro")) ? "" : jade_interp)) + "</p><div class=\"step-number\">1</div><p>" + (jade.escape(null == (jade_interp = t("leave google step1 title")) ? "" : jade_interp)) + "</p><a id=\"connect-google\"" + (jade.attr("title", t("leave google connect label"), true, false)) + " class=\"btn\">" + (jade.escape(null == (jade_interp = t("leave google connect label")) ? "" : jade_interp)) + "</a></section><section id=\"step-pastecode\" class=\"step\"><div class=\"step-number\">2</div><p>" + (jade.escape(null == (jade_interp = t("leave google step2 title")) ? "" : jade_interp)) + "</p><form><input id=\"auth_code\" type=\"text\" name=\"auth_code\" placeholder=\"google auth_code\" required=\"required\"/><a id=\"step-pastecode-ok\" class=\"btn\">" + (jade.escape(null == (jade_interp = t('confirm')) ? "" : jade_interp)) + "</a></form></section><section id=\"step-pickscope\" class=\"step\"><div class=\"step-number\">3</div><p>" + (jade.escape(null == (jade_interp = t('leave google choice title')) ? "" : jade_interp)) + "</p><label>" + (jade.escape(null == (jade_interp = t("leave google choice photo")) ? "" : jade_interp)) + "<input type=\"checkbox\" name=\"photos\" value=\"photos\" checked=\"checked\"/></label><label>" + (jade.escape(null == (jade_interp = t("leave google choice calendar")) ? "" : jade_interp)) + "<input type=\"checkbox\" name=\"calendars\" value=\"calendars\" checked=\"checked\"/></label><label>" + (jade.escape(null == (jade_interp = t("leave google choice contact")) ? "" : jade_interp)) + "<input type=\"checkbox\" name=\"contacts\" value=\"contacts\" checked=\"checked\"/></label><a id=\"lg-login\" class=\"btn\">" + (jade.escape(null == (jade_interp = t('leave google title')) ? "" : jade_interp)) + "</a></section></div>");;return buf.join("");
+buf.push("<div class=\"content\"><h1>" + (jade.escape(null == (jade_interp = t('leave google title')) ? "" : jade_interp)) + "</h1><section id=\"step-bigbutton\" class=\"step\"><p>" + (jade.escape(null == (jade_interp = t("leave google intro")) ? "" : jade_interp)) + "</p><div class=\"step-number\">1</div><p>" + (jade.escape(null == (jade_interp = t("leave google step1 title")) ? "" : jade_interp)) + "</p><a id=\"connect-google\"" + (jade.attr("title", t("leave google connect label"), true, false)) + " class=\"btn\">" + (jade.escape(null == (jade_interp = t("leave google connect label")) ? "" : jade_interp)) + "</a></section><section id=\"step-pastecode\" class=\"step\"><div class=\"step-number\">2</div><p>" + (jade.escape(null == (jade_interp = t("leave google step2 title")) ? "" : jade_interp)) + "</p><form><input id=\"auth_code\" type=\"text\" name=\"auth_code\" placeholder=\"google auth_code\" required=\"required\"/><a id=\"step-pastecode-ok\" class=\"btn\">" + (jade.escape(null == (jade_interp = t('confirm')) ? "" : jade_interp)) + "</a></form></section><section id=\"step-pickscope\" class=\"step\"><div class=\"step-number\">3</div><p>" + (jade.escape(null == (jade_interp = t('leave google choice title')) ? "" : jade_interp)) + "</p><label>" + (jade.escape(null == (jade_interp = t("leave google choice photo")) ? "" : jade_interp)) + "<input type=\"checkbox\" name=\"photos\" value=\"photos\" checked=\"checked\"/></label><label>" + (jade.escape(null == (jade_interp = t("leave google choice calendar")) ? "" : jade_interp)) + "<input type=\"checkbox\" name=\"calendars\" value=\"calendars\" checked=\"checked\"/></label><label>" + (jade.escape(null == (jade_interp = t("leave google choice contact")) ? "" : jade_interp)) + "<input type=\"checkbox\" name=\"contacts\" value=\"contacts\" checked=\"checked\"/></label><label>" + (jade.escape(null == (jade_interp = t("leave google choice sync gmail")) ? "" : jade_interp)) + "<input type=\"checkbox\" name=\"sync_gmail\" value=\"sync_gmail\" checked=\"checked\"/></label><a id=\"lg-login\" class=\"btn\">" + (jade.escape(null == (jade_interp = t('leave google title')) ? "" : jade_interp)) + "</a></section></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -643,7 +654,7 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),photos = locals_.photos,contacts = locals_.contacts,events = locals_.events,invalidToken = locals_.invalidToken;
+var locals_ = (locals || {}),photos = locals_.photos,contacts = locals_.contacts,events = locals_.events,syncedGmail = locals_.syncedGmail,invalidToken = locals_.invalidToken;
 if ( photos.processing || contacts.processing || events.processing)
 {
 buf.push("<h1 class=\"pa2 matop0 biggest darkbg center\">" + (jade.escape(null == (jade_interp = t('import running')) ? "" : jade_interp)) + "</h1>");
@@ -714,6 +725,10 @@ else
 buf.push("<h4>" + (jade.escape(null == (jade_interp = t('import contact complete')) ? "" : jade_interp)) + "</h4>");
 }
 buf.push("<div" + (jade.attr("style", "height: 3px; background: #8D6E63; width:" + ((contacts.number/contacts.total) * 100) + "%", true, false)) + "></div><p>" + (jade.escape(null == (jade_interp = contacts.number + t("import amount contacts") + contacts.total) ? "" : jade_interp)) + "</p></div>");
+}
+if ( syncedGmail)
+{
+buf.push("<div><h4>" + (jade.escape(null == (jade_interp = t('gmail account synced')) ? "" : jade_interp)) + "</h4></div>");
 }
 if ( invalidToken)
 {
