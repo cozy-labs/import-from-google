@@ -104,5 +104,6 @@ module.exports = (access_token, callback)->
                         app: 'calendar'
                         url: 'calendar/'
 
+                callback()
 
 

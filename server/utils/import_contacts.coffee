@@ -156,9 +156,9 @@ module.exports = (token, callback) ->
         google: listContacts
         cozy: Contact.all
     , (err, contacts) ->
+        log.debug "got #{contacts?.google?.length} contacts"
         return callback err if err
-        log.debug "got #{contacts.length} contacts"
-        total = contacts.length
+        total = contacts.google?.length
 
         async.eachSeries contacts.google, (gContact, cb) ->
             addContactToCozy gContact, contacts.cozy, cb

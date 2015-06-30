@@ -152,3 +152,4 @@ module.exports = (access_token, done)->
                         app: 'photos'
                         url: 'photos/'
 
+                done()
