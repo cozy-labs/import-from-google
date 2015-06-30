@@ -8,9 +8,12 @@ module.exports.isSamePerson = (contact1, contact2) ->
 
 # Check if (cozy)contact fuzzily has the specified field
 hasField = (field, contact, checkType = false) ->
+    return false unless field.value?
+
     contact.datapoints.some (baseField) ->
         if field.name is baseField.name and (
-            not checkType or checkType and field.type is baseField.type)
+           not checkType or checkType and field.type is baseField.type) and
+           baseField.value?
 
             if field.name is 'tel'
                 return field.value.replace(/[-\s]/g, '') is baseField.value.replace(/[-\s]/g, '')
