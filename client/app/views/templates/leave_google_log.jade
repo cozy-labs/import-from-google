@@ -33,7 +33,7 @@ div.content
         div
             h4= t('gmail account synced')
     if invalidToken
-        div.error=t('leave google invalid token')
+        div.error=t('invalid token')
 
     unless photos.processing || contacts.processing || events.processing
         p= t('import success message')

@@ -12,7 +12,7 @@ div.content
         p=t("leave google step2 title")
         form
             input#auth_code(type="text", name="auth_code",
-                  placeholder="google auth_code", required)
+                  placeholder=t("google auth_code"), required)
             a#step-pastecode-ok.btn= t('confirm')
 
     section.step#step-pickscope
