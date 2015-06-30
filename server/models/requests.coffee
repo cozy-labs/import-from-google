@@ -19,3 +19,8 @@ module.exports =
         all: cozydb.defaultRequests.all
         byDate: (doc) -> emit new Date(doc.start), doc
         byCalendar: cozydb.defaultRequests.by 'tags[0]'
+    account:
+        all: cozydb.defaultRequests.all
+        byEmailWithOauth: (doc) ->
+            if doc.oauthProvider is "GMAIL"
+                emit doc.login, doc
