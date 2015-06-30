@@ -61,31 +61,79 @@ Contact::save = (callback) ->
 PREFIX = 'http://schemas.google.com/g/2005#'
 
 Contact.fromGoogleContact = (gContact)->
-    contact = {}
+    return unless gContact?
 
-    full_name = gContact.title?.$t or '(empty name)'
+    contact =
 
-    contact.fn = full_name
-    # infortunately google do not give us first_name and last_name
-    # but only full_name
-    contact.n = "#{full_name};;;;" # name in vcard name string format
+        fn: gContact.gd$name?.gd$fullName?.$t
+        n: "#{gContact.gd$name?.gd$familyName?.$t or ''};#{gContact.gd$name?.gd$givenName?.$t or ''};#{gContact.gd$name?.gd$additionalName?.$t or ''};#{gContact.gd$name?.gd$namePrefix?.$t or ''};#{gContact.gd$name?.gd$nameSuffix?.$t or ''}"
 
-    contact.note = gContact.content?.$t or ''
+        org: gContact?.gd$organization?.gd$orgName?.$t
+        title: gContact?.gd$organization?.gd$orgTitle?.$t
+        # department
+        bday: gContact.gContact$birthday?.when
+        nickname: gContact.gContact$nickname?.$t
+        note: gContact.content?.$t
+
+        # url:   ?many...
+        # revision      : <-- todo ?
+        #tags          : ['google']
+        #accounts
+        #??binary        : Object
+
+        #  SOCIAL.
+    getTypeFragment = (component) ->
+        return component.rel?.split('#')[1] or component.label or 'other'
+    getTypePlain = (component) ->
+        return component.rel or component.label or 'other'
+
 
     contact.datapoints = []
-    for email in gContact['gd$email'] or []
+    for email in gContact.gd$email or []
         contact.datapoints.push
             name: "email"
             pref: email.primary or false
             value: email.address
-            type: email.rel?.replace(PREFIX, '') or 'other'
+            type: getTypeFragment email
 
-    for phone in gContact['gd$phoneNumber'] or []
+
+    for phone in gContact.gd$phoneNumber or []
         contact.datapoints.push
             name: "tel"
             pref: phone.primary or false
             value: phone.uri?.replace('tel:', '')
-            type: phone.rel?.replace(PREFIX, '') or 'other'
+            type: getTypeFragment phone
+
+    for im in gContact.gd$im or []
+        contact.datapoints.push
+            name: "chat"
+            value: im.address
+            type: im.protocol?.split('#')[1] or 'other'
+
+    for adr in gContact.gd$structuredPostalAddress or []
+        contact.datapoints.push
+            name: "adr"
+            value: ["", "", adr.gd$formattedAddress?.$t, "", "", "", ""]
+            type: getTypeFragment adr
+
+
+    for web in gContact.gContact$website or []
+        contact.datapoints.push
+            name: "url"
+            value: web.href
+            type: getTypePlain web
+
+    for rel in gContact.gContact$relation or []
+        contact.datapoints.push
+            name: "relation"
+            value: rel.$t
+            type: getTypePlain rel
+
+    for ev in gContact.gContact$event or []
+        contact.datapoints.push
+            name: "about"
+            value: ev.gd$when?.startTime
+            type: getTypePlain ev
 
     return contact
 
@@ -104,3 +152,6 @@ Contact::getName = ->
                 name = dp.value
 
     return name
+
+Contact.all = (callback)->
+    Contact.request 'all', callback

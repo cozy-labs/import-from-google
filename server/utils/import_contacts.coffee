@@ -1,4 +1,5 @@
 Contact = require '../models/contact'
+CompareContacts = require '../utils/compare_contacts'
 async = require 'async'
 realtimer = require './realtimer'
 log = require('printit')(prefix: 'contactsimport')
@@ -14,6 +15,42 @@ total = 0
 
 NotificationHelper = require 'cozy-notifications-helper'
 notification = new NotificationHelper 'leave-google'
+
+
+addContactToCozy = (gContact, cozyContacts, callback) ->
+    log.debug "import 1 contact"
+    fromGoogle = new Contact Contact.fromGoogleContact gContact
+
+    name = fromGoogle.getName()
+    log.debug "looking or #{name}"
+
+    # look for same, take the first one
+    fromCozy = null
+    for cozyContact in cozyContacts
+        if CompareContacts.isSamePerson cozyContact, fromGoogle
+            fromCozy = cozyContact
+            break
+
+    endCb = (err, updatedContact) ->
+        log.debug "updated #{name} err=#{err}"
+        return callback err if err
+        addContactPicture updatedContact, gContact, (err) ->
+            log.debug "picture err #{err}"
+            setTimeout callback, 100
+        numberProcessed += 1
+        realtimer.sendContacts
+            number: numberProcessed
+            total: total
+
+    if fromCozy? #  merge
+        log.debug "merging #{name}"
+        toCreate = CompareContacts.mergeContacts fromCozy, fromGoogle
+        toCreate.save endCb
+
+    else # create
+        fromGoogle.revision = new Date().toISOString()
+        log.debug "creating #{name}"
+        Contact.create fromGoogle, endCb
 
 
 createContact = (gContact, callback) ->
@@ -86,7 +123,9 @@ listContacts = (callback) ->
         port: 443
         path: '/m8/feeds/contacts/default/full?alt=json&max-results=10000'
         method: 'GET'
-        headers: 'Authorization': 'Bearer ' + access_token
+        headers:
+            'Authorization': 'Bearer ' + access_token
+            'GData-Version': '3.0'
 
     req = https.request opts, (res) ->
         data = []
@@ -111,12 +150,20 @@ module.exports = (token, callback) ->
     access_token = token
     log.debug 'request contacts list'
     numberProcessed = 0
-    listContacts (err, contacts)->
+
+    async.parallel
+        # google: dummyListContacts
+        google: listContacts
+        cozy: Contact.all
+    , (err, contacts) ->
         return callback err if err
         log.debug "got #{contacts.length} contacts"
         total = contacts.length
-        async.eachSeries contacts, createContact, (err)->
-            callback err if err
+
+        async.eachSeries contacts.google, (gContact, cb) ->
+            addContactToCozy gContact, contacts.cozy, cb
+        , (err)->
+            return callback err if err
             console.log "create notification for contacts"
             notification.createOrUpdatePersistent "leave-google-contacts",
                 app: 'leave-google'
@@ -125,3 +172,4 @@ module.exports = (token, callback) ->
                     app: 'contacts'
                     url: 'contacts/'
             callback()
+
