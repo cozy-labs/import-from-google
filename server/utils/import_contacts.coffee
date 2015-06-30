@@ -124,4 +124,4 @@ module.exports = (token, callback) ->
                 resource:
                     app: 'contacts'
                     url: 'contacts/'
-
+            callback()

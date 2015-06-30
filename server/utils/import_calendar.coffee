@@ -88,21 +88,23 @@ module.exports = (access_token, callback)->
                 cozyEvent.tags = ['google calendar']
                 log.debug "cozy create 1 event"
                 Event.createIfNotExist cozyEvent, (err) ->
+                    return callback err if err
                     log.error err if err
                     setTimeout next, 100
                     realtimer.sendCalendar
                         number: ++numberProcessed
                         total: gEvents.length
             , (err)->
-                callback err if err
-                console.log "create notification for events"
+                return callback err if err
 
+                log.info "create notification for events"
                 notification.createOrUpdatePersistent "leave-google-calendar",
                     app: 'leave-google'
                     text: "Importation de #{numberProcessed} évenements terminé"
                     resource:
                         app: 'calendar'
                         url: 'calendar/'
+                callback()
 
 
 

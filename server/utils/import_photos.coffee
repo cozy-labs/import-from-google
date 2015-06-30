@@ -151,4 +151,4 @@ module.exports = (access_token, done)->
                     resource:
                         app: 'photos'
                         url: 'photos/'
-
+                done()
