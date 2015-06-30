@@ -65,7 +65,7 @@ Contact.fromGoogleContact = (gContact)->
 
     contact =
 
-        fn: gContact.gd$name?.gd$fullName
+        fn: gContact.gd$name?.gd$fullName?.$t
         n: "#{gContact.gd$name?.gd$familyName?.$t or ''};#{gContact.gd$name?.gd$givenName?.$t or ''};#{gContact.gd$name?.gd$additionalName?.$t or ''};#{gContact.gd$name?.gd$namePrefix?.$t or ''};#{gContact.gd$name?.gd$nameSuffix?.$t or ''}"
 
         org: gContact?.gd$organization?.gd$orgName?.$t
@@ -113,7 +113,7 @@ Contact.fromGoogleContact = (gContact)->
     for adr in gContact.gd$structuredPostalAddress or []
         contact.datapoints.push
             name: "adr"
-            value: adr.gd$formattedAddress?.$t
+            value: ["", "", adr.gd$formattedAddress?.$t, "", "", "", ""]
             type: getTypeFragment adr
 
 
