@@ -3,7 +3,7 @@ momentTz = require 'moment-timezone'
 async = require 'async'
 log = require('printit')
     prefix: 'event:model'
-
+_ = require 'lodash'
 
 module.exports = Event = cozydb.getModel 'Event',
     start       : type: String
@@ -51,3 +51,20 @@ Event.validGoogleEvent = (gEvent) ->
     return valid = (gEvent.start?.dateTime? or gEvent.start?.date?) and
         (gEvent.end?.dateTime? or gEvent.end?.date?) and
         gEvent.summary?
+
+
+Event.createIfNotExist = (cozyEvent, callback) ->
+    Event.request 'byDate', key: cozyEvent.start, (err, events) ->
+        exist = _.find events, (event)->
+            return event.end is cozyEvent.end and event.description is cozyEvent.description
+        if exist
+            console.log "dont create because exist"
+            callback()
+        else
+            console.log "create"
+            Event.create cozyEvent, callback
+
+
+
+
+

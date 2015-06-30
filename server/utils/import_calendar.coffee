@@ -87,7 +87,7 @@ module.exports = (access_token, callback)->
                 cozyEvent = Event.fromGoogleEvent gEvent
                 cozyEvent.tags = ['google calendar']
                 log.debug "cozy create 1 event"
-                Event.create cozyEvent, (err) ->
+                Event.createIfNotExist cozyEvent, (err) ->
                     log.error err if err
                     setTimeout next, 100
                     realtimer.sendCalendar

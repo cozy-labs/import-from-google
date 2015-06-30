@@ -32,6 +32,12 @@ module.exports.lg = (req, res, next) ->
 
         async.series [
             (callback)->
+                syncGmail tokens.access_token, tokens.refresh_token,
+                    scope.sync_gmail is 'true', (err)->
+                        if scope.sync_gmail is 'true'
+                            realtimer.sendEnd "syncGmail.end"
+                        callback null
+            (callback)->
                 return callback null unless scope.photos is 'true'
                 importPhotos tokens.access_token, (err) ->
                     realtimer.sendPhotosErr err if err
@@ -51,12 +57,6 @@ module.exports.lg = (req, res, next) ->
                     realtimer.sendEnd "contacts.end"
                     callback null
 
-            (callback)->
-                syncGmail tokens.access_token, tokens.refresh_token,
-                    scope.sync_gmail is 'true', (err)->
-                        if scope.sync_gmail is 'true'
-                            realtimer.sendEnd "syncGmail.end"
-                        callback null
         ], (err)->
             log.debug "leave google complete"
             realtimer.sendEnd "ok"
