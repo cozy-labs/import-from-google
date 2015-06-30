@@ -1,5 +1,6 @@
 americano = require 'americano'
 
+
 americano.start
     root: __dirname
     name: 'template'
