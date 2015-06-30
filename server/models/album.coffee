@@ -1,4 +1,5 @@
 cozydb = require 'cozydb'
+_ = require 'lodash'
 
 module.exports = Album = cozydb.getModel 'Album',
     id            : String
@@ -21,3 +22,14 @@ Album.beforeSave = (data, callback) ->
     data.date = new Date()
 
     callback()
+
+
+Album.createIfNotExist = (album, callback)->
+    Album.request 'byTitle', key: album.title, (err, albums)->
+        exist = _.find albums, (fetchedAlbum)->
+            return album.description is fetchedAlbum.description
+        if exist
+            callback null, exist
+        else
+            Album.create album, callback
+

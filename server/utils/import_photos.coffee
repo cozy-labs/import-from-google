@@ -48,7 +48,7 @@ importAlbum = (gAlbum, done) ->
         description: "Imported from your google account"
 
     log.debug "creating album #{gAlbum.title.$t}"
-    Album.create albumToCreate, (err, cozyAlbum) ->
+    Album.createIfNotExist albumToCreate, (err, cozyAlbum) ->
         log.debug "created #{err}"
 
         importPhotos cozyAlbum.id, gAlbum, done
@@ -83,7 +83,7 @@ importOnePhoto = (albumId, photo, done)->
         albumid: albumId
 
     log.debug "creating photo #{data.title}"
-    Photo.create data, (err, cozyPhoto)->
+    Photo.createIfNotExist data, (err, cozyPhoto)->
         downloadOnePhoto cozyPhoto, url, type, done
 
 downloadOnePhoto = (cozyPhoto, url, type, done) ->

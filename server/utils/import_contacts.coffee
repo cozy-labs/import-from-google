@@ -36,7 +36,7 @@ addContactToCozy = (gContact, cozyContacts, callback) ->
         return callback err if err
         addContactPicture updatedContact, gContact, (err) ->
             log.debug "picture err #{err}"
-            setTimeout callback, 100
+            setTimeout callback, 10
         numberProcessed += 1
         realtimer.sendContacts
             number: numberProcessed
@@ -90,6 +90,7 @@ createContact = (gContact, callback) ->
 
 PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo"
 addContactPicture = (cozyContact, gContact, done) ->
+    return done null
     pictureLink = gContact.link.filter (link) -> link.rel is PICTUREREL
     pictureUrl = pictureLink[0]?.href
 
@@ -161,10 +162,10 @@ module.exports = (token, callback) ->
         total = contacts.google?.length
 
         async.eachSeries contacts.google, (gContact, cb) ->
-            addContactToCozy gContact, contacts.cozy, cb
+            addContactToCozy gContact, contacts.cozy, (err)->
+                cb err
         , (err)->
             return callback err if err
-            console.log "create notification for contacts"
             notification.createOrUpdatePersistent "leave-google-contacts",
                 app: 'leave-google'
                 text: "Importation de #{total} contacts terminé"
