@@ -152,3 +152,6 @@ Contact::getName = ->
                 name = dp.value
 
     return name
+
+Contact.all = (callback)->
+    Contact.request 'all', callback
