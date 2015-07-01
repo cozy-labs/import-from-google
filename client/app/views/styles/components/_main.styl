@@ -1,0 +1,80 @@
+*
+    box-sizing border-box
+
+[aria-disabled="true"]
+    opacity 0.4
+    cursor not-allowed
+
+// remove transition to text intend when the spinner is coming
+[aria-busy="true"]
+[aria-busy="false"]
+    transition text-indent 0s 0s
+
+[aria-busy="true"]
+    display         flex
+    align-items     center
+    justify-content center
+    text-indent     -100em
+
+    &:after
+        content           ''
+        display           block
+        width             1.4em
+        height            1.4em
+        background-image  url('/images/spinner-white.svg')
+        background-repeat no-repeat
+        background-size   cover
+
+body
+    @extend $body-background
+    @extend $font
+    margin  0
+
+main
+    @extend $center-div
+    @extend $full-height-vp
+
+h1
+    margin      0.5em 0 0.3em
+    font-size   1.8em
+    font-weight normal
+    text-align  center
+
+h2
+    margin  0
+    @extend $headings-02
+
+a
+    color           $blue
+    text-decoration none
+
+.content-block
+    display     flex
+    align-items center
+    padding     0.8em 0
+
+.step-number
+    box-sizing   content-box
+    flex         none
+    padding      0.5em 0.5em 0.5em 0
+    width        1em
+    height       1em
+    border-right 2px solid $grey-02
+    font-size    1.5em
+    line-height  1
+    color        $grey-06
+    text-align   center
+
+.text-block
+    padding-left 1em
+
+.google-services-list label
+    display     flex
+    align-items center
+    margin      0.7em 2em
+
+.help
+        margin-top 0
+        color      $grey-05
+        font-size  1.1em
+        text-align center
