@@ -118,7 +118,10 @@ module.exports = function(access_token, callback) {
         cozyEvent = Event.fromGoogleEvent(gEvent);
         cozyEvent.tags = ['google calendar'];
         log.debug("cozy create 1 event");
-        return Event.create(cozyEvent, function(err) {
+        return Event.createIfNotExist(cozyEvent, function(err) {
+          if (err) {
+            return callback(err);
+          }
           if (err) {
             log.error(err);
           }
@@ -130,10 +133,10 @@ module.exports = function(access_token, callback) {
         });
       }, function(err) {
         if (err) {
-          callback(err);
+          return callback(err);
         }
-        console.log("create notification for events");
-        return notification.createOrUpdatePersistent("leave-google-calendar", {
+        log.info("create notification for events");
+        notification.createOrUpdatePersistent("leave-google-calendar", {
           app: 'leave-google',
           text: "Importation de " + numberProcessed + " évenements terminé",
           resource: {
@@ -141,6 +144,7 @@ module.exports = function(access_token, callback) {
             url: 'calendar/'
           }
         });
+        return callback();
       });
     });
   });

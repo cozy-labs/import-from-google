@@ -42,7 +42,7 @@ module.exports.generateRequestToken = function(authCode, callback) {
   urlEncodedData = querystring.stringify(data);
   log.debug("requestToken " + authCode);
   return client.post("?" + urlEncodedData, data, function(err, res, body) {
-    console.log("gotToken", body);
+    log.debug("gotToken", body);
     return callback(err, body);
   });
 };

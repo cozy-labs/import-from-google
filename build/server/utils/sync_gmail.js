@@ -9,7 +9,7 @@ plus = google.plus('v1');
 
 oauth2Client = require('./google_access_token').oauth2Client;
 
-module.exports = function(access_token, refresh_token, callback) {
+module.exports = function(access_token, refresh_token, force, callback) {
   oauth2Client.setCredentials({
     access_token: access_token
   });
@@ -17,17 +17,34 @@ module.exports = function(access_token, refresh_token, callback) {
     userId: 'me',
     auth: oauth2Client
   }, function(err, profile) {
-    var account, _ref;
+    var account;
     account = {
       label: "GMAIL oauth2",
       name: profile.displayName,
-      login: (_ref = profile.emails[0]) != null ? _ref.value : void 0,
+      login: profile.emails[0].value,
       oauthProvider: "GMAIL",
       initialized: false,
       oauthRefreshToken: refresh_token
     };
-    return Account.create(account, function(err, account) {
-      return callback(err, account);
+    return Account.request('byEmailWithOauth', {
+      key: profile.emails[0].value
+    }, function(err, fetchedAccounts) {
+      if (err) {
+        return callback(err);
+      }
+      if (fetchedAccounts.length !== 0) {
+        return fetchedAccounts[0].updateAttributes({
+          oauthRefreshToken: refresh_token
+        }, function(err) {
+          return callback(err, fetchedAccounts[0]);
+        });
+      } else if (force) {
+        return Account.create(account, function(err, account) {
+          return callback(err, account);
+        });
+      } else {
+        return callback();
+      }
     });
   });
 };

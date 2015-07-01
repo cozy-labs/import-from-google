@@ -69,7 +69,7 @@ importAlbum = function(gAlbum, done) {
     description: "Imported from your google account"
   };
   log.debug("creating album " + gAlbum.title.$t);
-  return Album.create(albumToCreate, function(err, cozyAlbum) {
+  return Album.createIfNotExist(albumToCreate, function(err, cozyAlbum) {
     log.debug("created " + err);
     return importPhotos(cozyAlbum.id, gAlbum, done);
   });
@@ -114,7 +114,7 @@ importOnePhoto = function(albumId, photo, done) {
     albumid: albumId
   };
   log.debug("creating photo " + data.title);
-  return Photo.create(data, function(err, cozyPhoto) {
+  return Photo.createIfNotExist(data, function(err, cozyPhoto) {
     return downloadOnePhoto(cozyPhoto, url, type, done);
   });
 };
@@ -195,7 +195,7 @@ module.exports = function(access_token, done) {
         if (err) {
           return done(err);
         }
-        return notification.createOrUpdatePersistent("leave-google-photos", {
+        notification.createOrUpdatePersistent("leave-google-photos", {
           app: 'leave-google',
           text: "Importation de " + numberPhotosProcessed + " photos terminé",
           resource: {
@@ -203,6 +203,7 @@ module.exports = function(access_token, done) {
             url: 'photos/'
           }
         });
+        return done();
       });
     });
   });

@@ -35,5 +35,13 @@ module.exports = {
       return emit(new Date(doc.start), doc);
     },
     byCalendar: cozydb.defaultRequests.by('tags[0]')
+  },
+  account: {
+    all: cozydb.defaultRequests.all,
+    byEmailWithOauth: function(doc) {
+      if (doc.oauthProvider === "GMAIL") {
+        return emit(doc.login, doc);
+      }
+    }
   }
 };

@@ -80,31 +80,90 @@ Contact.prototype.save = function(callback) {
 PREFIX = 'http://schemas.google.com/g/2005#';
 
 Contact.fromGoogleContact = function(gContact) {
-  var contact, email, full_name, phone, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
-  contact = {};
-  full_name = ((_ref = gContact.title) != null ? _ref.$t : void 0) || '(empty name)';
-  contact.fn = full_name;
-  contact.n = "" + full_name + ";;;;";
-  contact.note = ((_ref1 = gContact.content) != null ? _ref1.$t : void 0) || '';
+  var adr, contact, email, ev, getTypeFragment, getTypePlain, im, phone, rel, web, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref25, _ref26, _ref27, _ref28, _ref29, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+  if (gContact == null) {
+    return;
+  }
+  contact = {
+    fn: (_ref = gContact.gd$name) != null ? (_ref1 = _ref.gd$fullName) != null ? _ref1.$t : void 0 : void 0,
+    n: "" + (((_ref2 = gContact.gd$name) != null ? (_ref3 = _ref2.gd$familyName) != null ? _ref3.$t : void 0 : void 0) || '') + ";" + (((_ref4 = gContact.gd$name) != null ? (_ref5 = _ref4.gd$givenName) != null ? _ref5.$t : void 0 : void 0) || '') + ";" + (((_ref6 = gContact.gd$name) != null ? (_ref7 = _ref6.gd$additionalName) != null ? _ref7.$t : void 0 : void 0) || '') + ";" + (((_ref8 = gContact.gd$name) != null ? (_ref9 = _ref8.gd$namePrefix) != null ? _ref9.$t : void 0 : void 0) || '') + ";" + (((_ref10 = gContact.gd$name) != null ? (_ref11 = _ref10.gd$nameSuffix) != null ? _ref11.$t : void 0 : void 0) || ''),
+    org: gContact != null ? (_ref12 = gContact.gd$organization) != null ? (_ref13 = _ref12.gd$orgName) != null ? _ref13.$t : void 0 : void 0 : void 0,
+    title: gContact != null ? (_ref14 = gContact.gd$organization) != null ? (_ref15 = _ref14.gd$orgTitle) != null ? _ref15.$t : void 0 : void 0 : void 0,
+    bday: (_ref16 = gContact.gContact$birthday) != null ? _ref16.when : void 0,
+    nickname: (_ref17 = gContact.gContact$nickname) != null ? _ref17.$t : void 0,
+    note: (_ref18 = gContact.content) != null ? _ref18.$t : void 0
+  };
+  getTypeFragment = function(component) {
+    var _ref19;
+    return ((_ref19 = component.rel) != null ? _ref19.split('#')[1] : void 0) || component.label || 'other';
+  };
+  getTypePlain = function(component) {
+    return component.rel || component.label || 'other';
+  };
   contact.datapoints = [];
-  _ref2 = gContact['gd$email'] || [];
-  for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-    email = _ref2[_i];
+  _ref19 = gContact.gd$email || [];
+  for (_i = 0, _len = _ref19.length; _i < _len; _i++) {
+    email = _ref19[_i];
     contact.datapoints.push({
       name: "email",
       pref: email.primary || false,
       value: email.address,
-      type: ((_ref3 = email.rel) != null ? _ref3.replace(PREFIX, '') : void 0) || 'other'
+      type: getTypeFragment(email)
     });
   }
-  _ref4 = gContact['gd$phoneNumber'] || [];
-  for (_j = 0, _len1 = _ref4.length; _j < _len1; _j++) {
-    phone = _ref4[_j];
+  _ref20 = gContact.gd$phoneNumber || [];
+  for (_j = 0, _len1 = _ref20.length; _j < _len1; _j++) {
+    phone = _ref20[_j];
     contact.datapoints.push({
       name: "tel",
       pref: phone.primary || false,
-      value: (_ref5 = phone.uri) != null ? _ref5.replace('tel:', '') : void 0,
-      type: ((_ref6 = phone.rel) != null ? _ref6.replace(PREFIX, '') : void 0) || 'other'
+      value: (_ref21 = phone.uri) != null ? _ref21.replace('tel:', '') : void 0,
+      type: getTypeFragment(phone)
+    });
+  }
+  _ref22 = gContact.gd$im || [];
+  for (_k = 0, _len2 = _ref22.length; _k < _len2; _k++) {
+    im = _ref22[_k];
+    contact.datapoints.push({
+      name: "chat",
+      value: im.address,
+      type: ((_ref23 = im.protocol) != null ? _ref23.split('#')[1] : void 0) || 'other'
+    });
+  }
+  _ref24 = gContact.gd$structuredPostalAddress || [];
+  for (_l = 0, _len3 = _ref24.length; _l < _len3; _l++) {
+    adr = _ref24[_l];
+    contact.datapoints.push({
+      name: "adr",
+      value: ["", "", (_ref25 = adr.gd$formattedAddress) != null ? _ref25.$t : void 0, "", "", "", ""],
+      type: getTypeFragment(adr)
+    });
+  }
+  _ref26 = gContact.gContact$website || [];
+  for (_m = 0, _len4 = _ref26.length; _m < _len4; _m++) {
+    web = _ref26[_m];
+    contact.datapoints.push({
+      name: "url",
+      value: web.href,
+      type: getTypePlain(web)
+    });
+  }
+  _ref27 = gContact.gContact$relation || [];
+  for (_n = 0, _len5 = _ref27.length; _n < _len5; _n++) {
+    rel = _ref27[_n];
+    contact.datapoints.push({
+      name: "relation",
+      value: rel.$t,
+      type: getTypePlain(rel)
+    });
+  }
+  _ref28 = gContact.gContact$event || [];
+  for (_o = 0, _len6 = _ref28.length; _o < _len6; _o++) {
+    ev = _ref28[_o];
+    contact.datapoints.push({
+      name: "about",
+      value: (_ref29 = ev.gd$when) != null ? _ref29.startTime : void 0,
+      type: getTypePlain(ev)
     });
   }
   return contact;
@@ -127,4 +186,8 @@ Contact.prototype.getName = function() {
     }
   }
   return name;
+};
+
+Contact.all = function(callback) {
+  return Contact.request('all', callback);
 };

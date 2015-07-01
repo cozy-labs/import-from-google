@@ -40,6 +40,13 @@ module.exports.lg = function(req, res, next) {
     }
     return async.series([
       function(callback) {
+        return syncGmail(tokens.access_token, tokens.refresh_token, scope.sync_gmail === 'true', function(err) {
+          if (scope.sync_gmail === 'true') {
+            realtimer.sendEnd("syncGmail.end");
+          }
+          return callback(null);
+        });
+      }, function(callback) {
         if (scope.photos !== 'true') {
           return callback(null);
         }
@@ -54,7 +61,7 @@ module.exports.lg = function(req, res, next) {
         if (scope.calendars !== 'true') {
           return callback(null);
         }
-        return importCalendar(tokens.access_token, function() {
+        return importCalendar(tokens.access_token, function(err) {
           if (err) {
             realtimer.sendCalendarErr(err);
           }
@@ -70,14 +77,6 @@ module.exports.lg = function(req, res, next) {
             realtimer.sendContactsErr(err);
           }
           realtimer.sendEnd("contacts.end");
-          return callback(null);
-        });
-      }, function(callback) {
-        if (scope.sync_gmail !== 'true') {
-          return callback(null);
-        }
-        return syncGmail(tokens.access_token, tokens.refresh_token, function(err) {
-          realtimer.sendEnd("syncGmail.end");
           return callback(null);
         });
       }
