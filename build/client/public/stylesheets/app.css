@@ -23,7 +23,7 @@ body {
   text-decoration: none;
 }
 h2 {
-  font: 1.2em/1.3em 'Source Sans Pro', Sans-serif;
+  font: 1.3em/1.3em 'Source Sans Pro', Sans-serif;
   color: #32363f;
 }
 label.with-input span:first-child {
@@ -287,6 +287,12 @@ a {
   color: #92a0b2;
   font-size: 1.1em;
   text-align: center;
+}
+.processing .help {
+  text-align: left;
+}
+.processing .block {
+  padding: 1em 0;
 }
 .popup {
   position: relative;

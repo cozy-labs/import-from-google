@@ -702,19 +702,18 @@ else
 {
 buf.push("<header></header><h1 class=\"pa2 matop0 biggest darkbg center\">" + (jade.escape(null == (jade_interp = t('import complete')) ? "" : jade_interp)) + "</h1>");
 }
-buf.push("<div class=\"content\">");
+buf.push("<div class=\"content processing\">");
 if ( photos.numberPhotos)
 {
-buf.push("<div>");
+buf.push("<div class=\"block\">");
 if ( photos.processing)
 {
 buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import photo running')) ? "" : jade_interp)) + "</h2>");
 }
 else
 {
-buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import photo complete')) ? "" : jade_interp)) + "</h2>");
+buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import photo complete')) ? "" : jade_interp)) + "</h2><p class=\"help\">" + (jade.escape(null == (jade_interp = photos.numberPhotos + t("import amount photos") + photos.total) ? "" : jade_interp)) + "</p><div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div>");
 }
-buf.push("<div" + (jade.attr("style", "height: 8px; margin: 1em 0; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div><p class=\"help\">" + (jade.escape(null == (jade_interp = photos.numberPhotos + t("import amount photos") + photos.total) ? "" : jade_interp)) + "</p>");
 // iterate photos.error
 ;(function(){
   var $$obj = photos.error;
@@ -739,35 +738,35 @@ buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t("import al
 
 buf.push("</div>");
 }
-if ( events.number)
-{
-buf.push("<div>");
-if ( events.processing)
-{
-buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import calendar running')) ? "" : jade_interp)) + "</h2>");
-}
-else
-{
-buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import calendar complete')) ? "" : jade_interp)) + "</h2>");
-}
-buf.push("<div" + (jade.attr("style", "height: 8px; margin: 1em 0; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div><p class=\"help\">" + (jade.escape(null == (jade_interp = events.number + t("import amount events") + events.total) ? "" : jade_interp)) + "</p></div>");
-}
 if ( contacts.number)
 {
-buf.push("<div>");
+buf.push("<div class=\"block\">");
 if ( contacts.processing)
 {
 buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import contact running')) ? "" : jade_interp)) + "</h2>");
 }
 else
 {
-buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import contact complete')) ? "" : jade_interp)) + "</h2>");
+buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import contact complete')) ? "" : jade_interp)) + "</h2><p class=\"help\">" + (jade.escape(null == (jade_interp = contacts.number + t("import amount contacts") + contacts.total) ? "" : jade_interp)) + "</p><div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div>");
 }
-buf.push("<div" + (jade.attr("style", "height: 8px; margin: 1em 0; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div><p class=\"help\">" + (jade.escape(null == (jade_interp = contacts.number + t("import amount contacts") + contacts.total) ? "" : jade_interp)) + "</p></div>");
+buf.push("</div>");
+}
+if ( events.number)
+{
+buf.push("<div class=\"block\">");
+if ( events.processing)
+{
+buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import calendar running')) ? "" : jade_interp)) + "</h2>");
+}
+else
+{
+buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import calendar complete')) ? "" : jade_interp)) + "</h2><p class=\"help\">" + (jade.escape(null == (jade_interp = events.number + t("import amount events") + events.total) ? "" : jade_interp)) + "</p><div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div>");
+}
+buf.push("</div>");
 }
 if ( syncedGmail)
 {
-buf.push("<div><h2>" + (jade.escape(null == (jade_interp = t('gmail account synced')) ? "" : jade_interp)) + "</h2></div>");
+buf.push("<div class=\"block\"><h2>" + (jade.escape(null == (jade_interp = t('gmail account synced')) ? "" : jade_interp)) + "</h2></div>");
 }
 if ( invalidToken)
 {
