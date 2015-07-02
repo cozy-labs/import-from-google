@@ -15,6 +15,7 @@ i = 0
 
 NotificationHelper = require 'cozy-notifications-helper'
 notification = new NotificationHelper 'leave-google'
+localizationManager = require './localization_manager'
 
 
 #errUrl is an array with url of photos not saved
@@ -147,7 +148,7 @@ module.exports = (access_token, done)->
 
                 notification.createOrUpdatePersistent "leave-google-photos",
                     app: 'leave-google'
-                    text: "Importation de #{numberPhotosProcessed} photos terminé"
+                    text: localizationManager.t 'notif_import_photo', total: numberPhotosProcessed
                     resource:
                         app: 'photos'
                         url: 'photos/'

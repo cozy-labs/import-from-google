@@ -3,6 +3,8 @@ fs = require 'fs'
 path = require 'path'
 realtimer = require './utils/realtimer'
 
+localizationManager = require './utils/localization_manager'
+
 useBuildView = fs.existsSync path.resolve(__dirname, 'views', 'index.js')
 
 config =
@@ -28,6 +30,10 @@ config =
 
             app.io.on 'connection', (socket)->
                 realtimer.set(socket)
+
+            localizationManager.initialize ()->
+                console.log "LocalizationManager initialized"
+
 
     development: [
         americano.logger 'dev'

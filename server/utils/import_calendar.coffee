@@ -5,6 +5,7 @@ _ = require 'lodash'
 log = require('printit')(prefix: 'calendarimport')
 Event = require '../models/event'
 realtimer = require './realtimer'
+localizationManager = require './localization_manager'
 
 _ = require 'lodash'
 
@@ -100,7 +101,7 @@ module.exports = (access_token, callback)->
                 log.info "create notification for events"
                 notification.createOrUpdatePersistent "leave-google-calendar",
                     app: 'leave-google'
-                    text: "Importation de #{numberProcessed} évenements terminé"
+                    text: localizationManager.t 'notif_import_photo', total: numberProcessed
                     resource:
                         app: 'calendar'
                         url: 'calendar/'

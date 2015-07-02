@@ -1,10 +1,10 @@
 fs = require 'fs'
 Polyglot = require 'node-polyglot'
-Instance = require '../models/cozy_instance'
+Instance = require '../models/instance'
 
 # Seeks the proper locale files, depending if we run from build/ or from sources
 path = require 'path'
-LOCALE_PATH = path.resolve __dirname, '../../client/app/locales/'
+LOCALE_PATH = path.resolve __dirname, '../locales/'
 
 class LocalizationManager
 

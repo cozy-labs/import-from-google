@@ -15,7 +15,7 @@ total = 0
 
 NotificationHelper = require 'cozy-notifications-helper'
 notification = new NotificationHelper 'leave-google'
-
+localizationManager = require './localization_manager'
 
 addContactToCozy = (gContact, cozyContacts, callback) ->
     log.debug "import 1 contact"
@@ -166,9 +166,10 @@ module.exports = (token, callback) ->
                 cb err
         , (err)->
             return callback err if err
+
             notification.createOrUpdatePersistent "leave-google-contacts",
                 app: 'leave-google'
-                text: "Importation de #{total} contacts terminé"
+                text: localizationManager.t 'notif_import_contact', total: total
                 resource:
                     app: 'contacts'
                     url: 'contacts/'
