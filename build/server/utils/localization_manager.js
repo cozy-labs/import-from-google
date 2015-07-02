@@ -5,11 +5,11 @@ fs = require('fs');
 
 Polyglot = require('node-polyglot');
 
-Instance = require('../models/cozy_instance');
+Instance = require('../models/instance');
 
 path = require('path');
 
-LOCALE_PATH = path.resolve(__dirname, '../../client/app/locales/');
+LOCALE_PATH = path.resolve(__dirname, '../locales/');
 
 LocalizationManager = (function() {
   function LocalizationManager() {}
