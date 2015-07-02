@@ -5,35 +5,35 @@ div.content.popup
     else
         header
         h1.pa2.matop0.biggest.darkbg.center= t('import complete')
-    div.content
+    div.content.processing
         if photos.numberPhotos
-            div
+            div.block
                 if photos.processing
                     h2= t('import photo running')
                 else
                     h2= t('import photo complete')
-                div(style="height: 8px; margin: 1em 0; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: #{(photos.numberPhotos/photos.total) * 100}%")
-                p.help= photos.numberPhotos + t("import amount photos") + photos.total
+                    p.help= photos.numberPhotos + t("import amount photos") + photos.total
+                    div(style="height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: #{(photos.numberPhotos/photos.total) * 100}%")
                 for url in photos.error
                     p.help= t("import album failure") + url
-        if events.number
-            div
-                if events.processing
-                    h2= t('import calendar running')
-                else
-                    h2= t('import calendar complete')
-                div(style="height: 8px; margin: 1em 0; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: #{(photos.numberPhotos/photos.total) * 100}%")
-                p.help= events.number + t("import amount events") + events.total
         if contacts.number
-            div
+            div.block
                 if contacts.processing
                     h2= t('import contact running')
                 else
                     h2= t('import contact complete')
-                div(style="height: 8px; margin: 1em 0; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: #{(photos.numberPhotos/photos.total) * 100}%")
-                p.help= contacts.number + t("import amount contacts") + contacts.total
+                    p.help= contacts.number + t("import amount contacts") + contacts.total
+                    div(style="height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: #{(photos.numberPhotos/photos.total) * 100}%")
+        if events.number
+            div.block
+                if events.processing
+                    h2= t('import calendar running')
+                else
+                    h2= t('import calendar complete')
+                    p.help= events.number + t("import amount events") + events.total
+                    div(style="height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: #{(photos.numberPhotos/photos.total) * 100}%")
         if syncedGmail
-            div
+            div.block
                 h2= t('gmail account synced')
         if invalidToken
             div.error=t('invalid token')
