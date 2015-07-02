@@ -1,30 +1,6 @@
 *
     box-sizing border-box
 
-[aria-disabled="true"]
-    opacity 0.4
-    cursor not-allowed
-
-// remove transition to text intend when the spinner is coming
-[aria-busy="true"]
-[aria-busy="false"]
-    transition text-indent 0s 0s
-
-[aria-busy="true"]
-    display         flex
-    align-items     center
-    justify-content center
-    text-indent     -100em
-
-    &:after
-        content           ''
-        display           block
-        width             1.4em
-        height            1.4em
-        background-image  url('/images/spinner-white.svg')
-        background-repeat no-repeat
-        background-size   cover
-
 body
     @extend $body-background
     @extend $font
