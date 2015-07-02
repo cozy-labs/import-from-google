@@ -3,7 +3,7 @@ BaseView = require '../lib/base_view'
 module.exports = class LeaveGoogleLogView extends BaseView
 
     template: require './templates/leave_google_log'
-    tagName: 'section'
+    tagName: 'main'
     id: 'leave-google'
 
     model:

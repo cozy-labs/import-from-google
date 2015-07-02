@@ -1,0 +1,62 @@
+*
+    box-sizing border-box
+
+body
+    @extend $body-background
+    @extend $font
+    margin  0
+
+main
+    @extend $center-div
+    @extend $full-height-vp
+
+h1
+    margin      0.5em 0 0.3em
+    font-size   1.8em
+    font-weight normal
+    text-align  center
+
+h2
+    margin  0
+    @extend $headings-02
+
+a
+    color           $blue
+    text-decoration none
+
+.content-block
+    display     flex
+    align-items center
+    padding     0.8em 0
+
+.step-number
+    box-sizing   content-box
+    flex         none
+    padding      0.5em 0.5em 0.5em 0
+    width        1em
+    height       1em
+    border-right 2px solid $grey-02
+    font-size    1.5em
+    line-height  1
+    color        $grey-06
+    text-align   center
+
+.text-block
+    padding-left 1em
+
+.google-services-list label
+    display     flex
+    align-items center
+    margin      1em 2em
+
+    @media (max-width: 380px)
+        margin      1em 0.2em
+
+    &:last-of-type
+        margin-bottom 2.5em
+
+.help
+        margin-top 0
+        color      $grey-05
+        font-size  1.1em
+        text-align center

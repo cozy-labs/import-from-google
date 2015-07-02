@@ -3,7 +3,7 @@ BaseView = require '../lib/base_view'
 module.exports = class LeaveGoogleView extends BaseView
 
     template: require './templates/leave_google_form'
-    tagName: 'section'
+    tagName: 'main'
     id: 'leave-google'
 
     events:
