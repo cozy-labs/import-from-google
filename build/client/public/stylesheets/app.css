@@ -48,7 +48,7 @@ main {
   justify-content: center;
 }
 body {
-  background-image: url("/images/background_pattern.jpg");
+  background-image: url("../images/background_pattern.jpg");
   background-color: #32363f;
   background-position: center center;
   background-repeat: no-repeat;
@@ -216,7 +216,7 @@ input[type=checkbox] {
   flex: none;
   height: 48px;
   width: 48px;
-  background-image: url("/images/sprites/google-services-sprite.png");
+  background-image: url("../images/sprites/google-services-sprite.png");
 }
 .google-services-icons.gmail {
   background-position: -120px 0;
@@ -310,7 +310,7 @@ header {
   height: 96px;
   border-radius: 100%;
   background-color: #fff;
-  background-image: url("/images/sprites/leave-google-icon.svg");
+  background-image: url("../images/sprites/leave-google-icon.svg");
   background-position: 0 0;
 }
 @media (max-width: 380px) {
