@@ -16,6 +16,7 @@ module.exports =
     "leave google choice calendar":   "One-time import of Google Calendar"
     "leave google choice contacts":   "One-time import of Google Contacts"
     "leave google choice sync gmail": "GMail - Access your email from Cozy"
+    "leave google import data":       "import data"
 
     "import running":                 "Import running..."
     "import complete":                "Import complete!"
