@@ -85,6 +85,8 @@ importOnePhoto = (albumId, photo, done)->
 
     log.debug "creating photo #{data.title}"
     Photo.createIfNotExist data, (err, cozyPhoto)->
+        if cozyPhoto.exist
+            return done()
         downloadOnePhoto cozyPhoto, url, type, done
 
 downloadOnePhoto = (cozyPhoto, url, type, done) ->

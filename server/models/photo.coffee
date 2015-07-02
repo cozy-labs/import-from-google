@@ -1,5 +1,6 @@
 cozydb = require 'cozydb'
 _ = require 'lodash'
+log = require('printit')(prefix: 'photomodel')
 
 
 module.exports = Photo = cozydb.getModel 'Photo',
@@ -17,6 +18,8 @@ Photo.createIfNotExist = (photo, callback)->
         exist = _.find photos, (fetchedPhoto)->
             return photo.albumid is fetchedPhoto.albumid
         if exist
+            log.debug "#{photo.title} already imported"
+            exist.exist = true
             callback null, exist
         else
             Photo.create photo, callback
