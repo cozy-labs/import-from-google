@@ -693,9 +693,9 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),photos = locals_.photos,contacts = locals_.contacts,events = locals_.events,syncedGmail = locals_.syncedGmail,invalidToken = locals_.invalidToken;
+var locals_ = (locals || {}),events = locals_.events,contacts = locals_.contacts,photos = locals_.photos,syncedGmail = locals_.syncedGmail,invalidToken = locals_.invalidToken;
 buf.push("<div class=\"content popup\">");
-if ( photos.processing || contacts.processing || events.processing)
+if ( events.processing || contacts.processing || photos.processing)
 {
 buf.push("<header></header><h1 class=\"pa2 matop0 biggest darkbg center\">" + (jade.escape(null == (jade_interp = t('import running')) ? "" : jade_interp)) + "</h1>");
 }
@@ -774,9 +774,9 @@ if ( invalidToken)
 {
 buf.push("<div class=\"error\">" + (jade.escape(null == (jade_interp = t('invalid token')) ? "" : jade_interp)) + "</div>");
 }
-if (!( photos.processing || contacts.processing || events.processing))
+if (!( events.processing || contacts.processing || photos.processing))
 {
-buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('import success message')) ? "" : jade_interp)) + "</p><a id=\"connect-google\"" + (jade.attr("title", t("leave google connect another"), true, false)) + " class=\"btn btn-primary\"></a><a id=\"back-button\" href=\"/\" target=\"_top\" class=\"btn btn-secondary\">" + (jade.escape(null == (jade_interp = t('back to home')) ? "" : jade_interp)) + "</a>");
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('import success message')) ? "" : jade_interp)) + "</p><a id=\"back-button\" href=\"/\" target=\"_top\" class=\"btn btn-secondary\">" + (jade.escape(null == (jade_interp = t('back to home')) ? "" : jade_interp)) + "</a>");
 }
 buf.push("</div></div>");;return buf.join("");
 };
