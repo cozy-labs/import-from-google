@@ -65,7 +65,7 @@ fetchCalendar = (calendarId, callback) ->
     # and then
     , (err)->
         return callback err if err
-        log.debug "cozy to create #{calendarEvents.length} event"
+        log.debug "cozy to create #{calendarEvents.length} events"
         callback null, calendarEvents
 
 
@@ -84,6 +84,8 @@ module.exports = (access_token, callback)->
             numberProcessed = 0
             async.eachSeries gEvents, (gEvent, next)->
                 unless Event.validGoogleEvent gEvent
+                    log.debug "invalid event"
+
                     realtimer.sendCalendar
                         number: ++numberProcessed
                         total: gEvents.length
@@ -95,10 +97,11 @@ module.exports = (access_token, callback)->
                     Event.createIfNotExist cozyEvent, (err) ->
                         return callback err if err
                         log.error err if err
-                        setTimeout next, 100
                         realtimer.sendCalendar
                             number: ++numberProcessed
                             total: gEvents.length
+
+                        setTimeout next, 100
             , (err)->
                 return callback err if err
 
