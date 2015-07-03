@@ -117,6 +117,9 @@ importOnePhoto = function(albumId, photo, done) {
   };
   log.debug("creating photo " + data.title);
   return Photo.createIfNotExist(data, function(err, cozyPhoto) {
+    if (cozyPhoto.exist) {
+      return done();
+    }
     return downloadOnePhoto(cozyPhoto, url, type, done);
   });
 };
