@@ -15,9 +15,14 @@ module.exports = Photo = cozydb.getModel 'Photo',
 
 Photo.createIfNotExist = (photo, callback)->
     Photo.request 'byTitle', key: photo.title, (err, photos)->
-        exist = _.find photos, (fetchedPhoto)->
-            return photo.albumid is fetchedPhoto.albumid
-        if exist
+        log.debug "#{photo.title} check if exist"
+
+        if photos.length > 0
+            exist = photos[0]
+
+        log.debug "exist ? #{exist}"
+
+        if exist?
             log.debug "#{photo.title} already imported"
             exist.exist = true
             callback null, exist

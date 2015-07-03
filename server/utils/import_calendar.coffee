@@ -83,18 +83,22 @@ module.exports = (access_token, callback)->
 
             numberProcessed = 0
             async.eachSeries gEvents, (gEvent, next)->
-                return next null unless Event.validGoogleEvent gEvent
-                # it's not an error
-                cozyEvent = Event.fromGoogleEvent gEvent
-                cozyEvent.tags = ['google calendar']
-                log.debug "cozy create 1 event"
-                Event.createIfNotExist cozyEvent, (err) ->
-                    return callback err if err
-                    log.error err if err
-                    setTimeout next, 100
+                unless Event.validGoogleEvent gEvent
                     realtimer.sendCalendar
                         number: ++numberProcessed
                         total: gEvents.length
+                    next null
+                else
+                    cozyEvent = Event.fromGoogleEvent gEvent
+                    cozyEvent.tags = ['google calendar']
+                    log.debug "cozy create 1 event"
+                    Event.createIfNotExist cozyEvent, (err) ->
+                        return callback err if err
+                        log.error err if err
+                        setTimeout next, 100
+                        realtimer.sendCalendar
+                            number: ++numberProcessed
+                            total: gEvents.length
             , (err)->
                 return callback err if err
 

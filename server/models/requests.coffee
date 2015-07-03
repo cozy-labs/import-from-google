@@ -24,3 +24,7 @@ module.exports =
         byEmailWithOauth: (doc) ->
             if doc.oauthProvider is "GMAIL"
                 emit doc.login, doc
+    photo:
+        byTitle: (doc) -> emit doc.title, doc
+    album:
+        byTitle: (doc) -> emit doc.title, doc
