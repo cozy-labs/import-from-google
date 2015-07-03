@@ -1,5 +1,5 @@
 div.content.popup
-    if photos.processing || contacts.processing || events.processing
+    if events.processing || contacts.processing || photos.processing
         header
         h1.pa2.matop0.biggest.darkbg.center= t('import running')
     else
@@ -38,7 +38,6 @@ div.content.popup
         if invalidToken
             div.error=t('invalid token')
 
-        unless photos.processing || contacts.processing || events.processing
+        unless events.processing || contacts.processing || photos.processing
             p.help= t('import success message')
-            a#connect-google.btn.btn-primary(title=t("leave google connect another"))
             a.btn.btn-secondary#back-button(href="/", target="_top")=t('back to home')
