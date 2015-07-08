@@ -39,37 +39,46 @@ addContactToCozy = function(gContact, cozyContacts, callback) {
   fromGoogle = new Contact(Contact.fromGoogleContact(gContact));
   name = fromGoogle.getName();
   log.debug("looking or " + name);
-  fromCozy = null;
-  for (_i = 0, _len = cozyContacts.length; _i < _len; _i++) {
-    cozyContact = cozyContacts[_i];
-    if (CompareContacts.isSamePerson(cozyContact, fromGoogle)) {
-      fromCozy = cozyContact;
-      break;
-    }
-  }
-  endCb = function(err, updatedContact) {
-    log.debug("updated " + name + " err=" + err);
-    if (err) {
-      return callback(err);
-    }
-    addContactPicture(updatedContact, gContact, function(err) {
-      log.debug("picture err " + err);
-      return setTimeout(callback, 10);
-    });
+  if (name === "") {
     numberProcessed += 1;
-    return realtimer.sendContacts({
+    realtimer.sendContacts({
       number: numberProcessed,
       total: total
     });
-  };
-  if (fromCozy != null) {
-    log.debug("merging " + name);
-    toCreate = CompareContacts.mergeContacts(fromCozy, fromGoogle);
-    return toCreate.save(endCb);
+    return callback(null);
   } else {
-    fromGoogle.revision = new Date().toISOString();
-    log.debug("creating " + name);
-    return Contact.create(fromGoogle, endCb);
+    fromCozy = null;
+    for (_i = 0, _len = cozyContacts.length; _i < _len; _i++) {
+      cozyContact = cozyContacts[_i];
+      if (CompareContacts.isSamePerson(cozyContact, fromGoogle)) {
+        fromCozy = cozyContact;
+        break;
+      }
+    }
+    endCb = function(err, updatedContact) {
+      log.debug("updated " + name + " err=" + err);
+      if (err) {
+        return callback(err);
+      }
+      addContactPicture(updatedContact, gContact, function(err) {
+        log.debug("picture err " + err);
+        return setTimeout(callback, 10);
+      });
+      numberProcessed += 1;
+      return realtimer.sendContacts({
+        number: numberProcessed,
+        total: total
+      });
+    };
+    if (fromCozy != null) {
+      log.debug("merging " + name);
+      toCreate = CompareContacts.mergeContacts(fromCozy, fromGoogle);
+      return toCreate.save(endCb);
+    } else {
+      fromGoogle.revision = new Date().toISOString();
+      log.debug("creating " + name);
+      return Contact.create(fromGoogle, endCb);
+    }
   }
 };
 
@@ -78,46 +87,51 @@ createContact = function(gContact, callback) {
   log.debug("import 1 contact");
   toCreate = new Contact(Contact.fromGoogleContact(gContact));
   name = toCreate.getName();
-  log.debug("looking or " + name);
-  return Contact.request('byName', {
-    key: name
-  }, function(err, contacts) {
-    if (err) {
-      numberProcessed += 1;
-      realtimer.sendContacts({
-        number: numberProcessed,
-        total: contact
-      });
-      log.debug("err " + err);
-      return callback(null);
-    } else if (contacts.length === 0) {
-      toCreate.revision = new Date().toISOString();
-      log.debug("creating " + name);
-      Contact.create(toCreate, function(err, created) {
-        log.debug("created " + name + " err=" + err);
-        if (err) {
-          return callback(err);
-        }
-        return addContactPicture(created, gContact, function(err) {
-          log.debug("picture err " + err);
-          return setTimeout(callback, 100);
+  console.log("empty name ?", name);
+  if (name === "") {
+    return callback(null);
+  } else {
+    log.debug("looking for " + name);
+    return Contact.request('byName', {
+      key: name
+    }, function(err, contacts) {
+      if (err) {
+        numberProcessed += 1;
+        realtimer.sendContacts({
+          number: numberProcessed,
+          total: contact
         });
-      });
-      numberProcessed += 1;
-      return realtimer.sendContacts({
-        number: numberProcessed,
-        total: total
-      });
-    } else {
-      numberProcessed += 1;
-      realtimer.sendContacts({
-        number: numberProcessed,
-        total: total
-      });
-      log.debug("existing " + name);
-      return callback(null);
-    }
-  });
+        log.debug("err " + err);
+        return callback(null);
+      } else if (contacts.length === 0) {
+        toCreate.revision = new Date().toISOString();
+        log.debug("creating " + name);
+        Contact.create(toCreate, function(err, created) {
+          log.debug("created " + name + " err=" + err);
+          if (err) {
+            return callback(err);
+          }
+          return addContactPicture(created, gContact, function(err) {
+            log.debug("picture err " + err);
+            return setTimeout(callback, 100);
+          });
+        });
+        numberProcessed += 1;
+        return realtimer.sendContacts({
+          number: numberProcessed,
+          total: total
+        });
+      } else {
+        numberProcessed += 1;
+        realtimer.sendContacts({
+          number: numberProcessed,
+          total: total
+        });
+        log.debug("existing " + name);
+        return callback(null);
+      }
+    });
+  }
 };
 
 PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo";

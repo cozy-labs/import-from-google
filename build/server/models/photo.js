@@ -27,10 +27,12 @@ Photo.createIfNotExist = function(photo, callback) {
     key: photo.title
   }, function(err, photos) {
     var exist;
-    exist = _.find(photos, function(fetchedPhoto) {
-      return photo.albumid === fetchedPhoto.albumid;
-    });
-    if (exist) {
+    log.debug("" + photo.title + " check if exist");
+    if (photos.length > 0) {
+      exist = photos[0];
+    }
+    log.debug("exist ? " + exist);
+    if (exist != null) {
       log.debug("" + photo.title + " already imported");
       exist.exist = true;
       return callback(null, exist);
