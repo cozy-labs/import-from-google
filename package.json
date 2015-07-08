@@ -55,7 +55,7 @@
     "lint2": "coffeelint server",
     "dev": "parallelshell 'cd client && brunch w' 'coffee server.coffee'"
   },
-  "icon-path": "client/assets/icons/main_icon.svg",
+  "icon-path": "client/app/assets/icons/main_icon.svg",
   "cozy-permissions": {
     "Album": {
       "description": "Import photos albums"
