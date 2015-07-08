@@ -43,5 +43,15 @@ module.exports = {
         return emit(doc.login, doc);
       }
     }
+  },
+  photo: {
+    byTitle: function(doc) {
+      return emit(doc.title, doc);
+    }
+  },
+  album: {
+    byTitle: function(doc) {
+      return emit(doc.title, doc);
+    }
   }
 };

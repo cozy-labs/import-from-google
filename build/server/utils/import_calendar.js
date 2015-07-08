@@ -90,7 +90,7 @@ fetchCalendar = function(calendarId, callback) {
     if (err) {
       return callback(err);
     }
-    log.debug("cozy to create " + calendarEvents.length + " event");
+    log.debug("cozy to create " + calendarEvents.length + " events");
     return callback(null, calendarEvents);
   });
 };
@@ -115,24 +115,30 @@ module.exports = function(access_token, callback) {
       return async.eachSeries(gEvents, function(gEvent, next) {
         var cozyEvent;
         if (!Event.validGoogleEvent(gEvent)) {
-          return next(null);
-        }
-        cozyEvent = Event.fromGoogleEvent(gEvent);
-        cozyEvent.tags = ['google calendar'];
-        log.debug("cozy create 1 event");
-        return Event.createIfNotExist(cozyEvent, function(err) {
-          if (err) {
-            return callback(err);
-          }
-          if (err) {
-            log.error(err);
-          }
-          setTimeout(next, 100);
-          return realtimer.sendCalendar({
+          log.debug("invalid event");
+          realtimer.sendCalendar({
             number: ++numberProcessed,
             total: gEvents.length
           });
-        });
+          return next(null);
+        } else {
+          cozyEvent = Event.fromGoogleEvent(gEvent);
+          cozyEvent.tags = ['google calendar'];
+          log.debug("cozy create 1 event");
+          return Event.createIfNotExist(cozyEvent, function(err) {
+            if (err) {
+              return callback(err);
+            }
+            if (err) {
+              log.error(err);
+            }
+            realtimer.sendCalendar({
+              number: ++numberProcessed,
+              total: gEvents.length
+            });
+            return setTimeout(next, 100);
+          });
+        }
       }, function(err) {
         if (err) {
           return callback(err);
