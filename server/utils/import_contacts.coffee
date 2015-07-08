@@ -23,34 +23,42 @@ addContactToCozy = (gContact, cozyContacts, callback) ->
 
     name = fromGoogle.getName()
     log.debug "looking or #{name}"
-
-    # look for same, take the first one
-    fromCozy = null
-    for cozyContact in cozyContacts
-        if CompareContacts.isSamePerson cozyContact, fromGoogle
-            fromCozy = cozyContact
-            break
-
-    endCb = (err, updatedContact) ->
-        log.debug "updated #{name} err=#{err}"
-        return callback err if err
-        addContactPicture updatedContact, gContact, (err) ->
-            log.debug "picture err #{err}"
-            setTimeout callback, 10
+    if name is ""
         numberProcessed += 1
         realtimer.sendContacts
             number: numberProcessed
             total: total
 
-    if fromCozy? #  merge
-        log.debug "merging #{name}"
-        toCreate = CompareContacts.mergeContacts fromCozy, fromGoogle
-        toCreate.save endCb
+        callback null
+    else
 
-    else # create
-        fromGoogle.revision = new Date().toISOString()
-        log.debug "creating #{name}"
-        Contact.create fromGoogle, endCb
+        # look for same, take the first one
+        fromCozy = null
+        for cozyContact in cozyContacts
+            if CompareContacts.isSamePerson cozyContact, fromGoogle
+                fromCozy = cozyContact
+                break
+
+        endCb = (err, updatedContact) ->
+            log.debug "updated #{name} err=#{err}"
+            return callback err if err
+            addContactPicture updatedContact, gContact, (err) ->
+                log.debug "picture err #{err}"
+                setTimeout callback, 10
+            numberProcessed += 1
+            realtimer.sendContacts
+                number: numberProcessed
+                total: total
+
+        if fromCozy? #  merge
+            log.debug "merging #{name}"
+            toCreate = CompareContacts.mergeContacts fromCozy, fromGoogle
+            toCreate.save endCb
+
+        else # create
+            fromGoogle.revision = new Date().toISOString()
+            log.debug "creating #{name}"
+            Contact.create fromGoogle, endCb
 
 
 createContact = (gContact, callback) ->
@@ -58,35 +66,39 @@ createContact = (gContact, callback) ->
     toCreate = new Contact Contact.fromGoogleContact gContact
 
     name = toCreate.getName()
-    log.debug "looking or #{name}"
-    Contact.request 'byName', key: name, (err, contacts) ->
-        if err
-            numberProcessed += 1
-            realtimer.sendContacts
-                number: numberProcessed
-                total: contact
-            log.debug "err #{err}"
-            callback null
-        else if contacts.length is 0
-            toCreate.revision = new Date().toISOString()
-            log.debug "creating #{name}"
-            Contact.create toCreate, (err, created) ->
-                log.debug "created #{name} err=#{err}"
-                return callback err if err
-                addContactPicture created, gContact, (err) ->
-                    log.debug "picture err #{err}"
-                    setTimeout callback, 100
-            numberProcessed += 1
-            realtimer.sendContacts
-                number: numberProcessed
-                total: total
-        else
-            numberProcessed += 1
-            realtimer.sendContacts
-                number: numberProcessed
-                total: total
-            log.debug "existing #{name}"
-            callback null
+    console.log "empty name ?", name
+    if name is ""
+        callback null
+    else
+        log.debug "looking for #{name}"
+        Contact.request 'byName', key: name, (err, contacts) ->
+            if err
+                numberProcessed += 1
+                realtimer.sendContacts
+                    number: numberProcessed
+                    total: contact
+                log.debug "err #{err}"
+                callback null
+            else if contacts.length is 0
+                toCreate.revision = new Date().toISOString()
+                log.debug "creating #{name}"
+                Contact.create toCreate, (err, created) ->
+                    log.debug "created #{name} err=#{err}"
+                    return callback err if err
+                    addContactPicture created, gContact, (err) ->
+                        log.debug "picture err #{err}"
+                        setTimeout callback, 100
+                numberProcessed += 1
+                realtimer.sendContacts
+                    number: numberProcessed
+                    total: total
+            else
+                numberProcessed += 1
+                realtimer.sendContacts
+                    number: numberProcessed
+                    total: total
+                log.debug "existing #{name}"
+                callback null
 
 PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo"
 addContactPicture = (cozyContact, gContact, done) ->
