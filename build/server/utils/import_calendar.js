@@ -140,7 +140,7 @@ module.exports = function(access_token, callback) {
         log.info("create notification for events");
         notification.createOrUpdatePersistent("leave-google-calendar", {
           app: 'leave-google',
-          text: localizationManager.t('notif_import_photo', {
+          text: localizationManager.t('notif_import_event', {
             total: numberProcessed
           }),
           resource: {
