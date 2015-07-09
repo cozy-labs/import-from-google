@@ -19,6 +19,7 @@ module.exports = (access_token, refresh_token, force, callback)->
             login: profile.emails[0].value
             oauthProvider: "GMAIL"
             initialized: false
+            oauthAccessToken: access_token
             oauthRefreshToken: refresh_token   # RefreshToken (in order to get an access_token)
 
         Account.request 'byEmailWithOauth', key: profile.emails[0].value , (err, fetchedAccounts)->
