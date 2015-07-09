@@ -8,6 +8,7 @@ module.exports = Album = cozydb.getModel 'Account',
     accountType: String         # "IMAP" or "TEST"
     oauthProvider: String       # GMAIL (only for the moment)
     oauthRefreshToken: String   # RefreshToken (in order to get an access_token)
+    oauthAccessToken: String   # RefreshToken (in order to get an access_token)
     initialized: Boolean        # Is the account ready ? (usefull for the moment
                                 # only for leave google app)
     smtpServer: String          # SMTP host
