@@ -24,6 +24,7 @@ module.exports = function(access_token, refresh_token, force, callback) {
       login: profile.emails[0].value,
       oauthProvider: "GMAIL",
       initialized: false,
+      oauthAccessToken: access_token,
       oauthRefreshToken: refresh_token
     };
     return Account.request('byEmailWithOauth', {

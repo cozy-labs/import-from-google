@@ -11,6 +11,7 @@ module.exports = Album = cozydb.getModel('Account', {
   accountType: String,
   oauthProvider: String,
   oauthRefreshToken: String,
+  oauthAccessToken: String,
   initialized: Boolean,
   smtpServer: String,
   smtpPort: Number,
