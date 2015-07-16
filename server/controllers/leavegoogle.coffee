@@ -58,6 +58,6 @@ module.exports.lg = (req, res, next) ->
                     callback null
 
         ], (err)->
-            log.debug "leave google complete"
+            log.debug "import from google complete"
             realtimer.sendEnd "ok"
             console.log err if err

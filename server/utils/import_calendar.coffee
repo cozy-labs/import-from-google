@@ -12,7 +12,7 @@ _ = require 'lodash'
 {oauth2Client} = require './google_access_token'
 
 NotificationHelper = require 'cozy-notifications-helper'
-notification = new NotificationHelper 'leave-google'
+notification = new NotificationHelper 'import-from-google'
 
 
 getCalendarId = (callback) ->
@@ -107,7 +107,7 @@ module.exports = (access_token, callback)->
 
                 log.info "create notification for events"
                 notification.createOrUpdatePersistent "leave-google-calendar",
-                    app: 'leave-google'
+                    app: 'import-from-google'
                     text: localizationManager.t 'notif_import_event', total: numberProcessed
                     resource:
                         app: 'calendar'
