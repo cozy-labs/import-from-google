@@ -102,14 +102,15 @@ createContact = (gContact, callback) ->
 
 PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo"
 addContactPicture = (cozyContact, gContact, done) ->
-    return done null
     pictureLink = gContact.link.filter (link) -> link.rel is PICTUREREL
     pictureUrl = pictureLink[0]?.href
 
     return done null unless pictureUrl
 
     opts = url.parse(pictureUrl)
-    opts.headers = 'Authorization': 'Bearer ' + access_token
+    opts.headers =
+        'Authorization': 'Bearer ' + access_token
+        'GData-Version': '3.0'
 
     https.get opts, (stream)->
         stream.on 'error', done
