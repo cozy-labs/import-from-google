@@ -1,5 +1,6 @@
 cozydb = require 'cozydb'
 _ = require 'lodash'
+log = require('printit')('modelAlbum')
 
 module.exports = Album = cozydb.getModel 'Album',
     id            : String
