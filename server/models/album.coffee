@@ -1,5 +1,6 @@
 cozydb = require 'cozydb'
 _ = require 'lodash'
+log = require('printit')('modelAlbum')
 
 module.exports = Album = cozydb.getModel 'Album',
     id            : String
@@ -26,7 +27,7 @@ Album.beforeSave = (data, callback) ->
 
 Album.createIfNotExist = (album, callback)->
     Album.request 'byTitle', key: album.title, (err, albums)->
-        log.debug "#{photo.title} check if exist"
+        log.debug "#{album.title} check if exist"
         exist = _.find albums, (fetchedAlbum)->
             return album.description is fetchedAlbum.description
 

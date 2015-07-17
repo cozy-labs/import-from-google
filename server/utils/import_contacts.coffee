@@ -14,7 +14,7 @@ numberProcessed = 0
 total = 0
 
 NotificationHelper = require 'cozy-notifications-helper'
-notification = new NotificationHelper 'leave-google'
+notification = new NotificationHelper 'import-from-google'
 localizationManager = require './localization_manager'
 
 addContactToCozy = (gContact, cozyContacts, callback) ->
@@ -102,14 +102,15 @@ createContact = (gContact, callback) ->
 
 PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo"
 addContactPicture = (cozyContact, gContact, done) ->
-    return done null
     pictureLink = gContact.link.filter (link) -> link.rel is PICTUREREL
     pictureUrl = pictureLink[0]?.href
 
     return done null unless pictureUrl
 
     opts = url.parse(pictureUrl)
-    opts.headers = 'Authorization': 'Bearer ' + access_token
+    opts.headers =
+        'Authorization': 'Bearer ' + access_token
+        'GData-Version': '3.0'
 
     https.get opts, (stream)->
         stream.on 'error', done
@@ -180,7 +181,7 @@ module.exports = (token, callback) ->
             return callback err if err
 
             notification.createOrUpdatePersistent "leave-google-contacts",
-                app: 'leave-google'
+                app: 'import-from-google'
                 text: localizationManager.t 'notif_import_contact', total: total
                 resource:
                     app: 'contacts'
