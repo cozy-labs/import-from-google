@@ -29,7 +29,7 @@ total = 0;
 
 NotificationHelper = require('cozy-notifications-helper');
 
-notification = new NotificationHelper('leave-google');
+notification = new NotificationHelper('import-from-google');
 
 localizationManager = require('./localization_manager');
 
@@ -138,7 +138,6 @@ PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo";
 
 addContactPicture = function(cozyContact, gContact, done) {
   var opts, pictureLink, pictureUrl, _ref;
-  return done(null);
   pictureLink = gContact.link.filter(function(link) {
     return link.rel === PICTUREREL;
   });
@@ -148,7 +147,8 @@ addContactPicture = function(cozyContact, gContact, done) {
   }
   opts = url.parse(pictureUrl);
   opts.headers = {
-    'Authorization': 'Bearer ' + access_token
+    'Authorization': 'Bearer ' + access_token,
+    'GData-Version': '3.0'
   };
   return https.get(opts, function(stream) {
     var thumbStream, type;
@@ -237,7 +237,7 @@ module.exports = function(token, callback) {
         return callback(err);
       }
       notification.createOrUpdatePersistent("leave-google-contacts", {
-        app: 'leave-google',
+        app: 'import-from-google',
         text: localizationManager.t('notif_import_contact', {
           total: total
         }),

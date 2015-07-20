@@ -81,7 +81,7 @@ module.exports.lg = function(req, res, next) {
         });
       }
     ], function(err) {
-      log.debug("leave google complete");
+      log.debug("import from google complete");
       realtimer.sendEnd("ok");
       if (err) {
         return console.log(err);

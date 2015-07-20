@@ -25,7 +25,7 @@ oauth2Client = require('./google_access_token').oauth2Client;
 
 NotificationHelper = require('cozy-notifications-helper');
 
-notification = new NotificationHelper('leave-google');
+notification = new NotificationHelper('import-from-google');
 
 getCalendarId = function(callback) {
   return calendar.calendarList.list({
@@ -145,7 +145,7 @@ module.exports = function(access_token, callback) {
         }
         log.info("create notification for events");
         notification.createOrUpdatePersistent("leave-google-calendar", {
-          app: 'leave-google',
+          app: 'import-from-google',
           text: localizationManager.t('notif_import_event', {
             total: numberProcessed
           }),

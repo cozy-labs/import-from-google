@@ -27,7 +27,7 @@ i = 0;
 
 NotificationHelper = require('cozy-notifications-helper');
 
-notification = new NotificationHelper('leave-google');
+notification = new NotificationHelper('import-from-google');
 
 localizationManager = require('./localization_manager');
 
@@ -201,7 +201,7 @@ module.exports = function(access_token, done) {
           return done(err);
         }
         notification.createOrUpdatePersistent("leave-google-photos", {
-          app: 'leave-google',
+          app: 'import-from-google',
           text: localizationManager.t('notif_import_photo', {
             total: numberPhotosProcessed
           }),
