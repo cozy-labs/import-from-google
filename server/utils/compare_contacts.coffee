@@ -46,9 +46,7 @@ module.exports.mergeContacts = (base, toMerge) ->
 
     base.tags = _union base.tags, toMerge.tags
     delete toMerge.tags
-
-    _extend base, toMerge
-
+    base = _extend base, toMerge
     return base
 
 _union = (a, b) ->
@@ -58,6 +56,7 @@ _union = (a, b) ->
 
 _extend = (a, b) ->
     for k, v of b
-        a[k] = v
+        if v?
+            a[k] = v
     return a
 

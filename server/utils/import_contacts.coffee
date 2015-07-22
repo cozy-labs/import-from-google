@@ -42,17 +42,16 @@ addContactToCozy = (gContact, cozyContacts, callback) ->
         endCb = (err, updatedContact) ->
             log.debug "updated #{name} err=#{err}"
             return callback err if err
-            addContactPicture updatedContact, gContact, (err) ->
-                log.debug "picture err #{err}"
-                setTimeout callback, 10
             numberProcessed += 1
             realtimer.sendContacts
                 number: numberProcessed
                 total: total
+            callback null, updatedContact
 
         if fromCozy? #  merge
             log.debug "merging #{name}"
             toCreate = CompareContacts.mergeContacts fromCozy, fromGoogle
+            toCreate.docType = 'contact'
             toCreate.save endCb
 
         else # create
@@ -60,45 +59,6 @@ addContactToCozy = (gContact, cozyContacts, callback) ->
             log.debug "creating #{name}"
             Contact.create fromGoogle, endCb
 
-
-createContact = (gContact, callback) ->
-    log.debug "import 1 contact"
-    toCreate = new Contact Contact.fromGoogleContact gContact
-
-    name = toCreate.getName()
-    console.log "empty name ?", name
-    if name is ""
-        callback null
-    else
-        log.debug "looking for #{name}"
-        Contact.request 'byName', key: name, (err, contacts) ->
-            if err
-                numberProcessed += 1
-                realtimer.sendContacts
-                    number: numberProcessed
-                    total: contact
-                log.debug "err #{err}"
-                callback null
-            else if contacts.length is 0
-                toCreate.revision = new Date().toISOString()
-                log.debug "creating #{name}"
-                Contact.create toCreate, (err, created) ->
-                    log.debug "created #{name} err=#{err}"
-                    return callback err if err
-                    addContactPicture created, gContact, (err) ->
-                        log.debug "picture err #{err}"
-                        setTimeout callback, 100
-                numberProcessed += 1
-                realtimer.sendContacts
-                    number: numberProcessed
-                    total: total
-            else
-                numberProcessed += 1
-                realtimer.sendContacts
-                    number: numberProcessed
-                    total: total
-                log.debug "existing #{name}"
-                callback null
 
 PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo"
 addContactPicture = (cozyContact, gContact, done) ->
@@ -111,7 +71,6 @@ addContactPicture = (cozyContact, gContact, done) ->
     opts.headers =
         'Authorization': 'Bearer ' + access_token
         'GData-Version': '3.0'
-
     https.get opts, (stream)->
         stream.on 'error', done
         unless stream.statusCode is 200
@@ -173,18 +132,27 @@ module.exports = (token, callback) ->
         log.debug "got #{contacts?.google?.length} contacts"
         return callback err if err
         total = contacts.google?.length
-
+        updatedContacts = {}
         async.eachSeries contacts.google, (gContact, cb) ->
-            addContactToCozy gContact, contacts.cozy, (err)->
+            addContactToCozy gContact, contacts.cozy, (err, updatedContact)->
+                updatedContacts[gContact.id.$t] = updatedContact
                 cb err
         , (err)->
             return callback err if err
+            async.eachSeries contacts.google, (gContact, cb) ->
+                if updatedContacts[gContact.id.$t]?
+                    addContactPicture updatedContacts[gContact.id.$t], gContact, (err) ->
+                        log.debug "picture err #{err}"
+                        setTimeout cb, 10
+                else
+                    cb()
+            , (err) ->
+                return callback err if err
 
-            notification.createOrUpdatePersistent "leave-google-contacts",
-                app: 'import-from-google'
-                text: localizationManager.t 'notif_import_contact', total: total
-                resource:
-                    app: 'contacts'
-                    url: 'contacts/'
-            callback()
-
+                notification.createOrUpdatePersistent "leave-google-contacts",
+                    app: 'import-from-google'
+                    text: localizationManager.t 'notif_import_contact', total: total
+                    resource:
+                        app: 'contacts'
+                        url: 'contacts/'
+                callback()
