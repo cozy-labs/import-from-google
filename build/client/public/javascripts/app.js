@@ -318,7 +318,7 @@ module.exports = ViewCollection = (function(_super) {
 
 require.register("locales/en", function(exports, require, module) {
 module.exports = {
-  "leave google title": "Leave Google",
+  "leave google title": "Import From Google",
   "leave google intro": "This tool will import your data from Google inside your Cozy.",
   "leave google step1 title": "Sign in to your Google account and authorize your Cozy to access it. You will get a complex string. Copy it in your clipboard.",
   "leave google email label": "Your Google email",
@@ -355,7 +355,7 @@ module.exports = {
 
 require.register("locales/fr", function(exports, require, module) {
 module.exports = {
-  "leave google title": "Quitter Google",
+  "leave google title": "Importer depuis Google",
   "leave google intro": "Bienvenue dans l’assistant d’import de vos données Google ! Il va vous aider à importer dans votre Cozy toutes vos données stockées chez Google.",
   "leave google step1 title": "Première étape : connectez-vous à votre compte Google et autorisez votre Cozy à y accéder. Google va vous fournir une chaine de caractères complexe. Copiez-la dans votre presse-papier :",
   "leave google email label": "Votre adresse Gmail",
