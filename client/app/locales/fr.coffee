@@ -1,6 +1,6 @@
 module.exports =
    # Leave Google
-    "leave google title": "Quitter Google"
+    "leave google title": "Importer depuis Google"
     "leave google intro": "Bienvenue dans l’assistant d’import de vos données Google ! Il va vous aider à importer dans votre Cozy toutes vos données stockées chez Google."
     "leave google step1 title": "Première étape : connectez-vous à votre compte Google et autorisez votre Cozy à y accéder. Google va vous fournir une chaine de caractères complexe. Copiez-la dans votre presse-papier :"
     "leave google email label": "Votre adresse Gmail"
