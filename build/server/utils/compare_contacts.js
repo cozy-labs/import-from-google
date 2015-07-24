@@ -50,7 +50,7 @@ module.exports.mergeContacts = function(base, toMerge) {
   delete toMerge.datapoints;
   base.tags = _union(base.tags, toMerge.tags);
   delete toMerge.tags;
-  _extend(base, toMerge);
+  base = _extend(base, toMerge);
   return base;
 };
 
@@ -66,7 +66,9 @@ _extend = function(a, b) {
   var k, v;
   for (k in b) {
     v = b[k];
-    a[k] = v;
+    if (v != null) {
+      a[k] = v;
+    }
   }
   return a;
 };
