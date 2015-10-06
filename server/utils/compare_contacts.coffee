@@ -1,22 +1,23 @@
 module.exports.isSamePerson = (contact1, contact2) ->
-    return contact1.fn is contact2.fn and
-        contact1.datapoints.some (field) ->
-            if field.name in ['tel', 'adr', 'email', 'chat']
-                return hasField field, contact2
-            else
-                return false
+    similar = contact1.datapoints.some (field) ->
+        if field.name in ['tel', 'adr', 'email', 'chat']
+            return hasField field, contact2
+        else
+            return false
+    return contact1.fn is contact2.fn and similar
 
 # Check if (cozy)contact fuzzily has the specified field
 hasField = (field, contact, checkType = false) ->
     return false unless field.value?
 
     contact.datapoints.some (baseField) ->
-        if field.name is baseField.name and (
-           not checkType or checkType and field.type is baseField.type) and
+        if field.name is baseField.name and
+           (not checkType or checkType and field.type is baseField.type) and
            baseField.value?
 
             if field.name is 'tel'
-                return field.value.replace(/[-\s]/g, '') is baseField.value.replace(/[-\s]/g, '')
+                return field.value.replace(/[-\s]/g, '') is
+                  baseField.value.replace(/[-\s]/g, '')
 
             else if field.name is 'adr'
                 same = true

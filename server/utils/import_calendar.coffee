@@ -106,9 +106,10 @@ module.exports = (access_token, callback)->
                 return callback err if err
 
                 log.info "create notification for events"
+                _ = localizationManager.t
                 notification.createOrUpdatePersistent "leave-google-calendar",
                     app: 'import-from-google'
-                    text: localizationManager.t 'notif_import_event', total: numberProcessed
+                    text: _ 'notif_import_event', total: numberProcessed
                     resource:
                         app: 'calendar'
                         url: 'calendar/'

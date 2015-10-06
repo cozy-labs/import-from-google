@@ -148,9 +148,10 @@ module.exports = (access_token, done)->
             , (err)->
                 return done err if err
 
+                _ = localizationManager.t
                 notification.createOrUpdatePersistent "leave-google-photos",
                     app: 'import-from-google'
-                    text: localizationManager.t 'notif_import_photo', total: numberPhotosProcessed
+                    text: _ 'notif_import_photo', total: numberPhotosProcessed
                     resource:
                         app: 'photos'
                         url: 'photos/'

@@ -56,7 +56,8 @@ Event.validGoogleEvent = (gEvent) ->
 Event.createIfNotExist = (cozyEvent, callback) ->
     Event.request 'byDate', key: cozyEvent.start, (err, events) ->
         exist = _.find events, (event)->
-            return event.end is cozyEvent.end and event.description is cozyEvent.description
+            return event.end is cozyEvent.end and
+               event.description is cozyEvent.description
         if exist
             console.log "dont create because exist"
             callback()
