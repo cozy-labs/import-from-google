@@ -4,6 +4,7 @@
         "css-brunch": "1.7.0",
         "coffee-script-brunch": "1.8.0",
         "stylus-brunch": "1.8.0",
-        "jade-brunch": "1.8.1"
+        "jade-brunch": "1.8.1",
+        "json-brunch": "^1.5.4"
     }
 }
