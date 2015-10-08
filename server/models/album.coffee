@@ -34,7 +34,7 @@ Album.createIfNotExist = (album, callback)->
         log.debug "exist ? #{exist}"
 
         if exist
-            log.debug "#{photo.title} already imported"
+            log.debug "#{album.title} already imported"
             callback null, exist
         else
             Album.create album, callback
