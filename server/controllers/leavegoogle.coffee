@@ -10,6 +10,7 @@ syncGmail      = require '../utils/sync_gmail'
 
 module.exports.index = (req, res) ->
     cozydb.api.getCozyInstance (err, instance) ->
+        log.error err if err
         locale = instance?.locale or 'en'
         url = googleToken.getAuthUrl()
         res.render 'index', imports: """
@@ -38,6 +39,7 @@ module.exports.lg = (req, res, next) ->
             (callback)->
                 syncGmail tokens.access_token, tokens.refresh_token,
                     scope.sync_gmail is 'true', (err)->
+                        log.error err if err
                         if scope.sync_gmail is 'true'
                             realtimer.sendEnd "syncGmail.end"
                         callback null

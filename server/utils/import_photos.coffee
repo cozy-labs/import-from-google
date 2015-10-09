@@ -37,10 +37,13 @@ getTotal = (albums, callback) ->
         log.debug albumFeedUrl
         log.debug "get photos total (album length to add to total)"
         gdataClient.getFeed albumFeedUrl, (err, photos) ->
-            next err if err
-            total += if photos then photos.feed.entry.length else 0
-            log.debug "photo total: #{total}"
-            next()
+            if err
+                log.error err
+                next err
+            else
+                total += if photos then photos.feed.entry.length else 0
+                log.debug "photo total: #{total}"
+                next()
     , callback
 
 importAlbum = (gAlbum, done) ->
@@ -50,9 +53,12 @@ importAlbum = (gAlbum, done) ->
 
     log.debug "creating album #{gAlbum.title.$t}"
     Album.createIfNotExist albumToCreate, (err, cozyAlbum) ->
-        log.debug "created #{err}"
-
-        importPhotos cozyAlbum.id, gAlbum, done
+        if err
+            log.error err
+            done err
+        else
+            log.debug "created #{err}"
+            importPhotos cozyAlbum.id, gAlbum, done
 
 importPhotos = (cozyAlbumId, gAlbum, done) ->
     albumFeedUrl = "#{ALBUMS_URL}/albumid/#{gAlbum.gphoto$id.$t}?alt=json"
@@ -64,8 +70,10 @@ importPhotos = (cozyAlbumId, gAlbum, done) ->
 
         async.eachSeries photos, (gPhoto, next) ->
             importOnePhoto cozyAlbumId, gPhoto, (err) ->
-                log.debug "done with 1 photo"
-                log.error err if err
+                if err
+                    log.error err
+                else
+                    log.debug "done with 1 photo"
                 realtimer.sendPhotosPhoto
                     number: ++numberPhotosProcessed
                     total: total
@@ -85,9 +93,13 @@ importOnePhoto = (albumId, photo, done)->
 
     log.debug "creating photo #{data.title}"
     Photo.createIfNotExist data, (err, cozyPhoto)->
-        if cozyPhoto.exist
-            return done()
-        downloadOnePhoto cozyPhoto, url, type, done
+        if err
+            log.error err
+            return done err
+        else
+            if cozyPhoto.exist
+                return done()
+            downloadOnePhoto cozyPhoto, url, type, done
 
 downloadOnePhoto = (cozyPhoto, url, type, done) ->
     https.get url, (stream)->
@@ -141,8 +153,10 @@ module.exports = (access_token, done)->
         getTotal feed.feed.entry, ->
             async.eachSeries feed.feed.entry, (gAlbum, next) ->
                 importAlbum gAlbum, (err) ->
-                    log.debug "done with 1 album"
-                    log.error err if err
+                    if err
+                        log.error err if err
+                    else
+                        log.debug "done with 1 album"
                     realtimer.sendPhotosAlbum number: ++numberAlbumProcessed
                     next null # loop anyway
             , (err)->

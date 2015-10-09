@@ -143,7 +143,7 @@ module.exports = (token, callback) ->
                 updated = updatedContacts[gContact.id.$t]
                 if updated?
                     addContactPicture updated, gContact, (err) ->
-                        log.debug "picture err #{err}"
+                        log.debug "picture err #{err}" if err
                         setTimeout cb, 10
                 else
                     cb()
