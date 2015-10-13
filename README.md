@@ -13,6 +13,11 @@ with a new experience. You can install Cozy on your own hardware where no one
 profiles you. You install only the applications you want. You can build your
 own one too.
 
+## Contribute with Transifex
+
+Transifex can be used the same way as git. It can push or pull translations. The config file in the .tx repository configure the way Transifex is working : it will get the json files from the locales repository.
+If you want to learn more about how to use this tool, I'll invite you to check [this](http://docs.transifex.com/introduction/) tutorial.
+
 ## Community
 
 You can reach the Cozy community via various support:

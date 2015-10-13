@@ -50,7 +50,7 @@
     "build:client1": "cd client/ && brunch build --production",
     "build:client2": "cp -R client/public build/client/",
     "build:client": "npm run clean:client && npm run build:client1 && npm run build:client2",
-    "build": "npm run build:server && npm run build:client",
+    "build": "npm run build:server && npm run build:client && cake build",
     "lint1": "coffee-jshint -o node server/**/*.coffee",
     "lint2": "coffeelint server",
     "dev": "parallelshell 'cd client && brunch w' 'coffee server.coffee'"
