@@ -154,7 +154,7 @@ module.exports = (access_token, done)->
             async.eachSeries feed.feed.entry, (gAlbum, next) ->
                 importAlbum gAlbum, (err) ->
                     if err
-                        log.error err if err
+                        log.error err
                     else
                         log.debug "done with 1 album"
                     realtimer.sendPhotosAlbum number: ++numberAlbumProcessed

@@ -55,7 +55,7 @@ fetchCalendar = (calendarId, callback) ->
     # fetch page by page
     async.doWhilst (next) ->
         fetchOnePage calendarId, pageToken, (err, result) ->
-            next err if err
+            return next err if err
             calendarEvents = calendarEvents.concat result.items
             pageToken = result.nextPageToken
             next null
