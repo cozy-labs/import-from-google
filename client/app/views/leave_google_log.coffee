@@ -35,7 +35,7 @@ module.exports = class LeaveGoogleLogView extends BaseView
             @model.photos.numberPhotos = data.number
             @model.photos.total = data.total
             @render()
-        window.sio.on "calendars", (data)=>
+        window.sio.on "calendars", (data) =>
             @model.events.number = data.number
             @model.events.total = data.total
             @render()
@@ -62,7 +62,7 @@ module.exports = class LeaveGoogleLogView extends BaseView
             @model.invalidToken = false
 
     afterRender: ->
-        #app.router.navigate '', trigger: false
+        app.router.navigate '', trigger: false
 
     getRenderData: ->
         return @model
