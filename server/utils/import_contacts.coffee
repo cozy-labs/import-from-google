@@ -140,18 +140,20 @@ module.exports = (token, callback) ->
         , (err)->
             return callback err if err
             async.eachSeries contacts.google, (gContact, cb) ->
-                if updatedContacts[gContact.id.$t]?
-                    addContactPicture updatedContacts[gContact.id.$t], gContact, (err) ->
-                        log.debug "picture err #{err}"
+                updated = updatedContacts[gContact.id.$t]
+                if updated?
+                    addContactPicture updated, gContact, (err) ->
+                        log.debug "picture err #{err}" if err
                         setTimeout cb, 10
                 else
                     cb()
             , (err) ->
                 return callback err if err
 
+                _ = localizationManager.t
                 notification.createOrUpdatePersistent "leave-google-contacts",
                     app: 'import-from-google'
-                    text: localizationManager.t 'notif_import_contact', total: total
+                    text: _ 'notif_import_contact', total: total
                     resource:
                         app: 'contacts'
                         url: 'contacts/'

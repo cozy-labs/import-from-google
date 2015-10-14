@@ -55,6 +55,7 @@ fetchCalendar = (calendarId, callback) ->
     # fetch page by page
     async.doWhilst (next) ->
         fetchOnePage calendarId, pageToken, (err, result) ->
+            return next err if err
             calendarEvents = calendarEvents.concat result.items
             pageToken = result.nextPageToken
             next null
@@ -106,9 +107,10 @@ module.exports = (access_token, callback)->
                 return callback err if err
 
                 log.info "create notification for events"
+                _ = localizationManager.t
                 notification.createOrUpdatePersistent "leave-google-calendar",
                     app: 'import-from-google'
-                    text: localizationManager.t 'notif_import_event', total: numberProcessed
+                    text: _ 'notif_import_event', total: numberProcessed
                     resource:
                         app: 'calendar'
                         url: 'calendar/'
