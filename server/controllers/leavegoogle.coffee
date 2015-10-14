@@ -1,17 +1,20 @@
+async = require 'async'
+cozydb = require 'cozydb'
 googleToken = require '../utils/google_access_token'
+importCalendar = require '../utils/import_calendar'
 importContacts = require '../utils/import_contacts'
 importPhotos = require '../utils/import_photos'
-importCalendar = require '../utils/import_calendar'
+log = require('printit')('leaveGcontroller')
 realtimer = require '../utils/realtimer'
 syncGmail = require '../utils/sync_gmail'
-async = require 'async'
-log = require('printit')('leaveGcontroller')
 
 module.exports.index = (req, res) ->
     url = googleToken.getAuthUrl()
-    res.render 'index', imports: """
-        window.oauthUrl = "#{url}";
-    """
+    cozydb.api.getCozyLocale (err, locale) ->
+        res.render 'index', imports: """
+            window.oauthUrl = "#{url}";
+            window.locale = "#{locale}";
+        """
 
 module.exports.lg = (req, res, next) ->
 
