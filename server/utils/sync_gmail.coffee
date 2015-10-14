@@ -2,6 +2,7 @@ Account = require '../models/account'
 google = require 'googleapis'
 plus = google.plus('v1')
 {oauth2Client} = require './google_access_token'
+log = require('printit')(prefix: 'syncgmail')
 
 
 
@@ -12,6 +13,9 @@ module.exports = (access_token, refresh_token, force, callback)->
         access_token: access_token
 
     plus.people.get { userId: 'me', auth: oauth2Client }, (err, profile)->
+        if err
+            log.error err
+            return callback err
 
         account =
             label: "GMAIL oauth2"
@@ -20,12 +24,17 @@ module.exports = (access_token, refresh_token, force, callback)->
             oauthProvider: "GMAIL"
             initialized: false
             oauthAccessToken: access_token
-            oauthRefreshToken: refresh_token   # RefreshToken (in order to get an access_token)
+            oauthRefreshToken: refresh_token
+            # RefreshToken (in order to get an access_token)
 
-        Account.request 'byEmailWithOauth', key: profile.emails[0].value , (err, fetchedAccounts)->
-            return callback err if err
+        email = profile.emails[0].value
+        Account.request 'byEmailWithOauth', key: email, (err, fetchedAccounts)->
+            if err
+                log.error err
+                return callback err
             unless fetchedAccounts.length is 0
-                fetchedAccounts[0].updateAttributes {oauthRefreshToken: refresh_token}, (err)->
+                newAttr = {oauthRefreshToken: refresh_token}
+                fetchedAccounts[0].updateAttributes newAttr, (err)->
                     callback err, fetchedAccounts[0]
             else if force
                 Account.create account, (err, account) ->

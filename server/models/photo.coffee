@@ -15,6 +15,7 @@ module.exports = Photo = cozydb.getModel 'Photo',
 
 Photo.createIfNotExist = (photo, callback)->
     Photo.request 'byTitle', key: photo.title, (err, photos)->
+        return callback err if err?
         log.debug "#{photo.title} check if exist"
 
         if photos.length > 0

@@ -1,6 +1,6 @@
 americano = require 'americano'
-fs = require 'fs'
-path = require 'path'
+fs        = require 'fs'
+path      = require 'path'
 realtimer = require './utils/realtimer'
 
 localizationManager = require './utils/localization_manager'
@@ -21,7 +21,7 @@ config =
             americano.errorHandler
                 dumpExceptions: true
                 showStack: true
-            americano.static __dirname + '/../client/public',
+            americano.static path.resolve(__dirname, '/../client/public'),
                 maxAge: 86400000
         ]
         afterStart: (app, server) ->
@@ -31,7 +31,7 @@ config =
             app.io.on 'connection', (socket)->
                 realtimer.set(socket)
 
-            localizationManager.initialize ()->
+            localizationManager.initialize ->
                 console.log "LocalizationManager initialized"
 
 

@@ -27,6 +27,7 @@ Album.beforeSave = (data, callback) ->
 
 Album.createIfNotExist = (album, callback)->
     Album.request 'byTitle', key: album.title, (err, albums)->
+        return callback err if err?
         log.debug "#{album.title} check if exist"
         exist = _.find albums, (fetchedAlbum)->
             return album.description is fetchedAlbum.description
@@ -34,7 +35,7 @@ Album.createIfNotExist = (album, callback)->
         log.debug "exist ? #{exist}"
 
         if exist
-            log.debug "#{photo.title} already imported"
+            log.debug "#{album.title} already imported"
             callback null, exist
         else
             Album.create album, callback
