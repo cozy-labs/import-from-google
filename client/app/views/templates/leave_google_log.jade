@@ -37,6 +37,8 @@ div.content.popup
                 div(style="height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: #{(photos.numberPhotos/photos.total) * 100}%")
         if invalidToken
             div.error=t('invalid token')
+            a.btn.btn-secondary#back-button(href="/", target="_top")=t('back to home')
+
 
         unless events.processing || contacts.processing || photos.processing
             p.help= t('import success message')
