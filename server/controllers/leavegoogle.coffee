@@ -36,7 +36,7 @@ module.exports.lg = (req, res, next) ->
         async.series [
             (callback) ->
                 syncGmail tokens.access_token, tokens.refresh_token,
-                    scope.sync_gmail is 'true', (err)->
+                    scope.sync_gmail is 'true', (err) ->
                         if scope.sync_gmail is 'true'
                             realtimer.sendEnd "syncGmail.end"
                         callback null
@@ -48,14 +48,14 @@ module.exports.lg = (req, res, next) ->
                     callback null
             (callback) ->
                 return callback null unless scope.calendars is 'true'
-                importCalendar tokens.access_token, (err)->
+                importCalendar tokens.access_token, (err) ->
                     realtimer.sendCalendarErr err if err
                     realtimer.sendEnd "events.end"
                     callback null
 
             (callback) ->
                 return callback null unless scope.contacts is 'true'
-                importContacts tokens.access_token, (err)->
+                importContacts tokens.access_token, (err) ->
                     realtimer.sendContactsErr err if err
                     realtimer.sendEnd "contacts.end"
                     callback null
