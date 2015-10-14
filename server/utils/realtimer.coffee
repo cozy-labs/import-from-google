@@ -2,36 +2,36 @@ _ = require 'lodash'
 
 socket = null
 
-sendCalendar = _.throttle((data)->
+sendCalendar = _.throttle((data) ->
     return unless socket
     socket.emit 'calendars', data
 , 350)
-sendCalendarErr = _.throttle((data)->
+sendCalendarErr = _.throttle((data) ->
     return unless socket
     socket.emit 'photos.err', data
 , 350)
-sendPhotosPhoto = _.throttle((data)->
+sendPhotosPhoto = _.throttle((data) ->
     return unless socket
     socket.emit 'photos.photo', data
 , 350)
-sendPhotosErr = _.throttle((data)->
+sendPhotosErr = _.throttle((data) ->
     return unless socket
     socket.emit 'photos.err', data
 , 350)
-sendPhotosAlbum = _.throttle((data)->
+sendPhotosAlbum = _.throttle((data) ->
     return unless socket
     socket.emit 'photos.album', data
 , 350)
-sendContacts = _.throttle((data)->
+sendContacts = _.throttle((data) ->
     return unless socket
     socket.emit 'contacts', data
 , 350)
-sendContactsErr = _.throttle((data)->
+sendContactsErr = _.throttle((data) ->
     return unless socket
     socket.emit 'photos.err', data
 , 350)
 
-sendEnd = (message)->
+sendEnd = (message) ->
     return unless socket
     socket.emit message
 
@@ -44,5 +44,5 @@ module.exports.sendContacts    = sendContacts
 module.exports.sendContactsErr = sendContactsErr
 module.exports.sendEnd         = sendEnd
 
-module.exports.set = (s)->
+module.exports.set = (s) ->
     socket = s

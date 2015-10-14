@@ -28,10 +28,10 @@ config =
             sio = require 'socket.io'
             app.io = sio server
 
-            app.io.on 'connection', (socket)->
+            app.io.on 'connection', (socket) ->
                 realtimer.set(socket)
 
-            localizationManager.initialize ()->
+            localizationManager.initialize ->
                 console.log "LocalizationManager initialized"
 
 
