@@ -61,6 +61,13 @@ module.exports = class LeaveGoogleLogView extends BaseView
             @render()
             @model.invalidToken = false
 
+        window.sio.on 'ok', =>
+            @model.events.processing = false
+            @model.contacts.processing = false
+            @model.photos.processing = false
+            @render()
+
+
     afterRender: ->
         app.router.navigate '', trigger: false
 
