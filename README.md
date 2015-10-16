@@ -15,7 +15,9 @@ own one too.
 
 ## Contribute with Transifex
 
-Transifex can be used the same way as git. It can push or pull translations. The config file in the .tx repository configure the way Transifex is working : it will get the json files from the locales repository.
+Transifex is a service that helps project internationalization. If you want to translate this application, you can do it from the website: https://www.transifex.com/cozy/cozy-import-from-google/.
+
+Transifex can also be used the same way as git. It can push or pull translations. The config file in the .tx repository configure the way Transifex is working: it will get the json files from the locales repository.
 If you want to learn more about how to use this tool, I'll invite you to check [this](http://docs.transifex.com/introduction/) tutorial.
 
 ## Community
