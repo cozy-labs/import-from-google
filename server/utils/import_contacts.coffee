@@ -9,7 +9,6 @@ _ = require 'lodash'
 https = require('https')
 url = require 'url'
 
-
 NotificationHelper = require 'cozy-notifications-helper'
 notification = new NotificationHelper 'import-from-google'
 localizationManager = require './localization_manager'
@@ -45,10 +44,6 @@ listContacts = (token, callback) ->
 
     req.on 'error', callback
     req.end()
-
-
-
-
 
 
 # get a list of every contact of a google account
