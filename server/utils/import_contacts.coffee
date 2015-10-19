@@ -31,6 +31,8 @@ listContacts = (token, callback) ->
         res.on 'error', callback
         res.on 'data', (chunk) -> data.push chunk
         res.on 'end', ->
+            err = null
+            result = null
             if res.statusCode is 200
                 try
                     result = JSON.parse(data.join('')).feed.entry

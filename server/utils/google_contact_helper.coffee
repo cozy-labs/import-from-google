@@ -1,5 +1,5 @@
-im = require 'imagemagick-stream'
 https = require 'https'
+im = require 'imagemagick-stream'
 url = require 'url'
 request = require 'request-json'
 
@@ -46,10 +46,7 @@ GCH.fromGoogleContact = (gContact, accountName)->
         part = gContact.gd$name?[field]?.$t or ''
         return part.replace /;/g, ' '
 
-
     contact.n = "#{nameComponent('gd$familyName')};#{nameComponent('gd$givenName')};#{nameComponent('gd$additionalName')};#{nameComponent('gd$namePrefix')};#{nameComponent('gd$nameSuffix')}"
-
-
 
     # Extract the type, or fall back on label, or other.
     getTypeFragment = (component) ->
@@ -68,12 +65,14 @@ GCH.fromGoogleContact = (gContact, accountName)->
             value: email.address
             type: getTypeFragment email
 
-
     for phone in gContact.gd$phoneNumber or []
+        # TODO : phone.uri is cleaner (country prefix, grouped numbers, ...),
+        # but is trickier to sync.
+        #value = phone.uri?.replace('tel:', '').replace(/-/g, ' ')
         contact.datapoints.push
             name: "tel"
             pref: phone.primary or false
-            value: phone.uri?.replace('tel:', '').replace(/-/g, ' ')
+            value: phone.$t
             type: getTypeFragment phone
 
     for iM in gContact.gd$im or []
@@ -93,7 +92,7 @@ GCH.fromGoogleContact = (gContact, accountName)->
             ]
             type: getTypeFragment adr
 
-    websites = gContact.gContact$website?.slice() or []
+    websites = gContact.gContact$website or []
     for web in websites
         contact.datapoints.push
             name: "url"
@@ -111,6 +110,8 @@ GCH.fromGoogleContact = (gContact, accountName)->
             name: "about"
             value: ev.gd$when?.startTime
             type: getTypePlain ev
+
+    contact.tags = ['google']
 
     return contact
 
@@ -136,7 +137,8 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
     gContact.gContact$birthday = when: contact.bday if contact.bday?
     gContact.gContact$nickname = $t: contact.nickname if contact.nickname?
-    gContact.content = $t: contact.note if contact.note?
+    # Force deletion with empty string if no note.
+    gContact.content = $t: contact.note or ''
 
     if contact.org? or contact.title?
         org = rel: "http://schemas.google.com/g/2005#other"
@@ -148,7 +150,6 @@ GCH.toGoogleContact = (contact, gEntry) ->
         if dp.type in ['fax', 'home', 'home_fax', 'mobile', 'other',
             'pager', 'work', 'work_fax']
             field.rel = "http://schemas.google.com/g/2005##{dp.type}"
-
         else
             field.label = dp.type
 
@@ -161,7 +162,7 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
     if contact.url and
        # Avoid duplication of url in datapoints.
-       not contact.datapoints.any((dp) ->
+       not contact.datapoints.some((dp) ->
             dp.type is "url" and dp.value is contact.url)
 
         addField 'gContact$website',
@@ -260,7 +261,6 @@ GCH.addContactPictureInCozy = (accessToken, cozyContact, gContact, done) ->
     # timeoutID = null
     request = https.get opts, (stream) ->
         log.debug "response for #{GCH.extractGoogleId(gContact)} picture"
-        # clearTimeout timeoutID
 
         stream.on 'error', done
         if stream.statusCode isnt 200
@@ -345,7 +345,6 @@ GCH.fetchAccountName = (accessToken, callback) ->
 # else create a brand new cozy contact
 # Return cozy contact updated or created to the cllabck
 GCH.updateCozyContact = (gEntry, contacts, accountName, token, callback) ->
-
     Contact = require '../models/contact'
     ofAccountByIds = contacts.ofAccountByIds
     cozyContacts = contacts.cozyContacts
@@ -366,7 +365,6 @@ GCH.updateCozyContact = (gEntry, contacts, accountName, token, callback) ->
 
     updateContact = (fromCozy, fromGoogle) ->
         CompareContacts.mergeContacts fromCozy, fromGoogle
-        fromCozy.setAccount fromGoogle.accounts[0]
         fromCozy.save endSavePicture
 
     # already in cozy ?
@@ -384,10 +382,6 @@ GCH.updateCozyContact = (gEntry, contacts, accountName, token, callback) ->
             log.info "Google contact #{gId} already synced and uptodate"
             log.debug "GContact #{fromCozy?.fn} already synced and uptodate"
             callback()
-
-    # Filter google's contact without name.
-    else if fromGoogle.getName() is ''
-        callback()
 
     else # Add to cozy.
         # look for same, take the first one
