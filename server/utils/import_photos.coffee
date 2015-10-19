@@ -41,7 +41,11 @@ getTotal = (albums, callback) ->
                 log.error err
                 next err
             else
-                total += if photos then photos.feed.entry.length else 0
+                if photos?.feed?.entry?
+                    total += photos.feed.entry.length
+                else
+                    total += 0
+
                 log.debug "photo total: #{total}"
                 next()
     , callback

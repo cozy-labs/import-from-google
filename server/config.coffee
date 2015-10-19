@@ -21,14 +21,14 @@ config =
             americano.errorHandler
                 dumpExceptions: true
                 showStack: true
-            americano.static path.resolve(__dirname, '/../client/public'),
+            americano.static path.resolve(__dirname, '../client/public'),
                 maxAge: 86400000
         ]
         afterStart: (app, server) ->
             sio = require 'socket.io'
             app.io = sio server
 
-            app.io.on 'connection', (socket)->
+            app.io.on 'connection', (socket) ->
                 realtimer.set(socket)
 
             localizationManager.initialize ->

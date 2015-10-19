@@ -1,13 +1,13 @@
 [main]
 host = https://www.transifex.com
 
-[import-from-google.enjson]
+[cozy-import-from-google.enjson]
 file_filter = client/app/locales/<lang>.json
 source_file = client/app/locales/en.json
 source_lang = en
 type = KEYVALUEJSON
 
-[import-from-google.server-enjson]
+[cozy-import-from-google.server-enjson]
 file_filter = server/locales/<lang>.json
 source_file = server/locales/en.json
 source_lang = en

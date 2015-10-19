@@ -6,13 +6,12 @@
   "leave google email placeholder": "you@gmail.com",
   "leave google connect label": "Sign in to Google",
   "leave google step2 title": "Then, copy and paste the code from the popup in this field:",
-  "invalid token": "The token is invalid, please restart the process from the beginning.",
-  "google auth_code": "Code provided by Google",
   "leave google choice title": "Choose what you want to do with your data stored on Google servers:",
   "leave google choice photos": "One-time import of Google Photos",
   "leave google choice calendar": "One-time import of Google Calendar",
   "leave google choice contacts": "One-time import of Google Contacts",
   "leave google choice sync gmail": "GMail - Access your email from Cozy",
+  "invalid token": "The token is invalid, please restart the process from the beginning.",
   "leave google import data": "import data",
   "import running": "Import running...",
   "import complete": "Import complete!",
@@ -29,5 +28,7 @@
   "gmail account synced": "Your Gmail account is now linked",
   "import success message": "Congratulations, all your Google data were properly imported in your Cozy! Now, you can browse and modify it via the main Cozy applications.",
   "leave google connect another": "Sign in to another account",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "google auth_code": "Code provided by Google",
+  "back to home": "Back to home"
 }
