@@ -1,6 +1,3 @@
-Contact = require '../models/contact'
-CompareContacts = require '../utils/compare_contacts'
-GoogleContactHelper = require '../utils/google_contact_helper'
 async = require 'async'
 realtimer = require './realtimer'
 log = require('printit')(prefix: 'contactsimport')
@@ -9,6 +6,10 @@ _ = require 'lodash'
 https = require('https')
 url = require 'url'
 
+Contact = require '../models/contact'
+Tag = require '../models/tag'
+CompareContacts = require '../utils/compare_contacts'
+GoogleContactHelper = require '../utils/google_contact_helper'
 NotificationHelper = require 'cozy-notifications-helper'
 notification = new NotificationHelper 'import-from-google'
 localizationManager = require './localization_manager'
@@ -53,7 +54,8 @@ module.exports = (token, callback) ->
         google: (cb) -> listContacts token, cb
         cozyContacts: Contact.all
         accountName: (cb) -> GoogleContactHelper.fetchAccountName token, cb
-
+        # Create a tag with google's blue to put on each synchronized contact.
+        tag: (cb) -> Tag.getOrCreate { name: 'google', color: '#4285F4'}, cb
     , (err, contacts) ->
         log.debug "got #{contacts?.google?.length} contacts"
         return callback err if err

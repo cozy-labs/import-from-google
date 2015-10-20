@@ -28,3 +28,6 @@ module.exports =
         byTitle: (doc) -> emit doc.title, doc
     album:
         byTitle: (doc) -> emit doc.title, doc
+
+    tag:
+        byName: (doc) -> emit doc.name, doc
