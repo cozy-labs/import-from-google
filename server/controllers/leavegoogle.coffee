@@ -68,3 +68,9 @@ module.exports.lg = (req, res, next) ->
             log.debug "import from google complete"
             realtimer.sendEnd "ok"
             console.log err if err
+
+# log client errors
+module.exports.logClient = (req, res) ->
+    log.error req.body.data
+    log.error req.body.data.error?.stack
+    res.send 'ok'
