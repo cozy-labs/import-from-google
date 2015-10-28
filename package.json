@@ -77,6 +77,9 @@
     },
     "Account": {
       "description": "Add email account"
+    },
+    "Tag":  {
+      "description": "Add a blue Google tag"
     }
   },
   "cozy-displayName": "Import From Google"
