@@ -137,7 +137,6 @@ $(function() {
     Backbone.history.start();
     url = window.location.origin;
     pathToSocketIO = "/" + (window.location.pathname.substring(1)) + "socket.io";
-    console.log(toto.titi);
     return window.sio = io(url, {
       path: pathToSocketIO,
       reconnectionDelayMax: 60000,
