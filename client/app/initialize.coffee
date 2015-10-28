@@ -28,7 +28,6 @@ $ ->
 
         url = window.location.origin
         pathToSocketIO = "/#{window.location.pathname.substring(1)}socket.io"
-        console.log toto.titi
 
         window.sio = io url,
             path: pathToSocketIO
