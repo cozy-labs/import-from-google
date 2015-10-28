@@ -294,6 +294,10 @@ a {
 .processing .block {
   padding: 1em 0;
 }
+.processing .fa-check {
+  color: #5c5;
+  padding-right: 10px;
+}
 .popup {
   position: relative;
   background: #fff;

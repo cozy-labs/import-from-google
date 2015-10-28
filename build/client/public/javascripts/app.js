@@ -110,34 +110,44 @@
   globals.require = require;
 })();
 require.register("initialize", function(exports, require, module) {
-var Router;
+var ErrorHandler, Router;
+
+ErrorHandler = require('./lib/error_helper');
 
 Router = require('./router');
 
+window.onError = ErrorHandler.onerror;
+
 $(function() {
   var e, locale, locales, pathToSocketIO, polyglot, url;
-  window.app = {};
-  locale = window.locale;
-  polyglot = new Polyglot();
   try {
-    locales = require("locales/" + locale);
+    window.app = {};
+    locale = window.locale;
+    polyglot = new Polyglot();
+    try {
+      locales = require("locales/" + locale);
+    } catch (_error) {
+      e = _error;
+      locale = 'en';
+      locales = require('locales/en');
+    }
+    polyglot.extend(locales);
+    window.t = polyglot.t.bind(polyglot);
+    window.app.router = new Router();
+    Backbone.history.start();
+    url = window.location.origin;
+    pathToSocketIO = "/" + (window.location.pathname.substring(1)) + "socket.io";
+    console.log(toto.titi);
+    return window.sio = io(url, {
+      path: pathToSocketIO,
+      reconnectionDelayMax: 60000,
+      reconectionDelay: 2000,
+      reconnectionAttempts: 3
+    });
   } catch (_error) {
     e = _error;
-    locale = 'en';
-    locales = require('locales/en');
+    return ErrorHandler.catchError(e);
   }
-  polyglot.extend(locales);
-  window.t = polyglot.t.bind(polyglot);
-  window.app.router = new Router();
-  Backbone.history.start();
-  url = window.location.origin;
-  pathToSocketIO = "/" + (window.location.pathname.substring(1)) + "socket.io";
-  return window.sio = io(url, {
-    path: pathToSocketIO,
-    reconnectionDelayMax: 60000,
-    reconectionDelay: 2000,
-    reconnectionAttempts: 3
-  });
 });
 
 });
@@ -204,6 +214,65 @@ module.exports = BaseView = (function(_super) {
   return BaseView;
 
 })(Backbone.View);
+
+});
+
+require.register("lib/error_helper", function(exports, require, module) {
+exports.onerror = function(msg, url, line, col, error) {
+  var data, exception, xhr;
+  console.error(msg, url, line, col, error, error != null ? error.stack : void 0);
+  exception = (error != null ? error.toString() : void 0) || msg;
+  if (exception !== window.lastError) {
+    data = {
+      data: {
+        type: 'error',
+        error: {
+          msg: msg,
+          name: error != null ? error.name : void 0,
+          full: exception,
+          stack: error != null ? error.stack : void 0
+        },
+        url: url,
+        line: line,
+        col: col,
+        href: window.location.href
+      }
+    };
+    xhr = new XMLHttpRequest();
+    xhr.open('POST', 'log', true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify(data));
+    return window.lastError = exception;
+  }
+};
+
+exports.catchError = function(e) {
+  var data, exception, xhr;
+  console.error(e, e != null ? e.stack : void 0);
+  exception = e.toString();
+  if (exception !== window.lastError) {
+    data = {
+      data: {
+        type: 'error',
+        error: {
+          msg: e.message,
+          name: e != null ? e.name : void 0,
+          full: exception,
+          stack: e != null ? e.stack : void 0
+        },
+        file: e != null ? e.fileName : void 0,
+        line: e != null ? e.lineNumber : void 0,
+        col: e != null ? e.columnNumber : void 0,
+        href: window.location.href
+      }
+    };
+    xhr = new XMLHttpRequest();
+    xhr.open('POST', 'log', true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify(data));
+    return window.lastError = exception;
+  }
+};
 
 });
 
@@ -325,13 +394,12 @@ module.exports = {
   "leave google email placeholder": "you@gmail.com",
   "leave google connect label": "Sign in to Google",
   "leave google step2 title": "Then, copy and paste the code from the popup in this field:",
-  "invalid token": "The token is invalid, please restart the process from the beginning.",
-  "google auth_code": "Code provided by Google",
   "leave google choice title": "Choose what you want to do with your data stored on Google servers:",
   "leave google choice photos": "One-time import of Google Photos",
   "leave google choice calendar": "One-time import of Google Calendar",
   "leave google choice contacts": "One-time import of Google Contacts",
   "leave google choice sync gmail": "GMail - Access your email from Cozy",
+  "invalid token": "The token is invalid, please restart the process from the beginning.",
   "leave google import data": "import data",
   "import running": "Import running...",
   "import complete": "Import complete!",
@@ -348,7 +416,9 @@ module.exports = {
   "gmail account synced": "Your Gmail account is now linked",
   "import success message": "Congratulations, all your Google data were properly imported in your Cozy! Now, you can browse and modify it via the main Cozy applications.",
   "leave google connect another": "Sign in to another account",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "google auth_code": "Code provided by Google",
+  "back to home": "Back to home"
 }
 ;
 });
@@ -363,13 +433,14 @@ module.exports = {
   "leave google connect label": "Connectez votre compte Google",
   "leave google step2 title": "Puis, copiez-collez le code affiché dans la fenêtre dans ce champ : ",
   "leave google choice title": "Félicitations, votre Cozy est connecté à votre compte Google ! Quelles données souhaitez-vous importer ?",
-  "leave google choice photo": "Vos photos",
+  "leave google choice photos": "Vos photos",
   "leave google choice calendar": "Vos calendriers",
-  "leave google choice contact": "Vos contacts",
+  "leave google choice contacts": "Vos contacts",
   "leave google choice sync gmail": "Gmail sync",
   "invalid token": "La clé que vous avez saisie est invalide, merci d’essayer de recommencer le processus depuis le début.",
+  "leave google import data": "importer les données",
   "import running": "Import en cours…",
-  "import complete": "Import terminé avec succès !",
+  "import complete": "Import terminé !",
   "import album failure": "L’import a échoué pour l’album : ",
   "import photo running": "Import de vos photos en cours…",
   "import contact running": "Import de vos contacts en cours…",
@@ -380,10 +451,12 @@ module.exports = {
   "import amount photos": " photos importées sur  ",
   "import amount events": " évènements importés sur ",
   "import amount contacts": " contacts importés sur ",
-  "import success message": "Félicitations, toutes vos données ont été importées avec succès de Google dans votre Cozy. Vous pouvez à présent les consulter et les modifier via vos applications Cozy. Accédez aux applications depuis la page d’accueil : ",
   "gmail account synced": "Votre compte GMail est à présent lié à votre Cozy.",
+  "import success message": "Félicitations, toutes vos données ont été importées avec succès de Google dans votre Cozy. Vous pouvez à présent les consulter et les modifier via vos applications Cozy. Accédez aux applications depuis la page d’accueil : ",
+  "leave google connect another": "Se connecter à un autre compte",
   "confirm": "Confirmer",
-  "google auth_code": "Code d'autorisation Google"
+  "google auth_code": "Code d'autorisation Google",
+  "back to home": "Retour à l'accueil"
 }
 ;
 });
@@ -578,22 +651,18 @@ module.exports = LeaveGoogleLogView = (function(_super) {
   LeaveGoogleLogView.prototype.initialize = function() {
     window.sio.on("photos.album", (function(_this) {
       return function(data) {
-        console.log("photos.album", data.number);
         _this.model.photos.numberAlbum = data.number;
         return _this.render();
       };
     })(this));
     window.sio.on("photos.err", (function(_this) {
       return function(data) {
-        console.log("photos.err", data.number);
-        console.log(data);
         _this.model.photos.error.push(data.url);
         return _this.render();
       };
     })(this));
     window.sio.on("photos.photo", (function(_this) {
       return function(data) {
-        console.log("photos.photo", data.number);
         _this.model.photos.numberPhotos = data.number;
         _this.model.photos.total = data.total;
         return _this.render();
@@ -601,7 +670,6 @@ module.exports = LeaveGoogleLogView = (function(_super) {
     })(this));
     window.sio.on("calendars", (function(_this) {
       return function(data) {
-        console.log("calendars", data.number);
         _this.model.events.number = data.number;
         _this.model.events.total = data.total;
         return _this.render();
@@ -609,7 +677,6 @@ module.exports = LeaveGoogleLogView = (function(_super) {
     })(this));
     window.sio.on("contacts", (function(_this) {
       return function(data) {
-        console.log("contacts", data.number);
         _this.model.contacts.number = data.number;
         _this.model.contacts.total = data.total;
         return _this.render();
@@ -617,38 +684,41 @@ module.exports = LeaveGoogleLogView = (function(_super) {
     })(this));
     window.sio.on("events.end", (function(_this) {
       return function() {
-        console.log("calendars done");
         _this.model.events.processing = false;
         return _this.render();
       };
     })(this));
     window.sio.on("contacts.end", (function(_this) {
       return function() {
-        console.log("contacts done");
         _this.model.contacts.processing = false;
         return _this.render();
       };
     })(this));
     window.sio.on("photos.end", (function(_this) {
       return function() {
-        console.log("photos done");
         _this.model.photos.processing = false;
         return _this.render();
       };
     })(this));
     window.sio.on("syncGmail.end", (function(_this) {
       return function() {
-        console.log("syncGmail done");
         _this.model.syncedGmail = true;
         return _this.render();
       };
     })(this));
-    return window.sio.on('invalid token', (function(_this) {
+    window.sio.on('invalid token', (function(_this) {
       return function() {
-        console.log("invalid token");
         _this.model.invalidToken = true;
         _this.render();
         return _this.model.invalidToken = false;
+      };
+    })(this));
+    return window.sio.on('ok', (function(_this) {
+      return function() {
+        _this.model.events.processing = false;
+        _this.model.contacts.processing = false;
+        _this.model.photos.processing = false;
+        return _this.render();
       };
     })(this));
   };
@@ -706,7 +776,7 @@ buf.push("<header></header><h1 class=\"pa2 matop0 biggest darkbg center\">" + (j
 buf.push("<div class=\"content processing\">");
 if ( syncedGmail)
 {
-buf.push("<div class=\"block\"><h2>" + (jade.escape(null == (jade_interp = t('gmail account synced')) ? "" : jade_interp)) + "</h2></div>");
+buf.push("<div class=\"block\"><h2><i class=\"fa fa-check\"></i><span>" + (jade.escape(null == (jade_interp = t('gmail account synced')) ? "" : jade_interp)) + "</span></h2></div>");
 }
 if ( photos.numberPhotos)
 {
@@ -717,9 +787,13 @@ buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import photo running'))
 }
 else
 {
-buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import photo complete')) ? "" : jade_interp)) + "</h2>");
+buf.push("<h2><i class=\"fa fa-check\"></i><span>" + (jade.escape(null == (jade_interp = t('import photo complete')) ? "" : jade_interp)) + "</span></h2>");
 }
-buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = photos.numberPhotos + t("import amount photos") + photos.total) ? "" : jade_interp)) + "</p><div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div>");
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = photos.numberPhotos + t("import amount photos") + photos.total) ? "" : jade_interp)) + "</p>");
+if ( photos.processing)
+{
+buf.push("<div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div>");
+}
 // iterate photos.error
 ;(function(){
   var $$obj = photos.error;
@@ -753,9 +827,14 @@ buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import calendar running
 }
 else
 {
-buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import calendar complete')) ? "" : jade_interp)) + "</h2>");
+buf.push("<h2><i class=\"fa fa-check\"></i><span>" + (jade.escape(null == (jade_interp = t('import calendar complete')) ? "" : jade_interp)) + "</span></h2>");
 }
-buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = events.number + t("import amount events") + events.total) ? "" : jade_interp)) + "</p><div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div></div>");
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = events.number + t("import amount events") + events.total) ? "" : jade_interp)) + "</p>");
+if ( events.processing)
+{
+buf.push("<div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div>");
+}
+buf.push("</div>");
 }
 if ( contacts.number)
 {
@@ -766,13 +845,18 @@ buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import contact running'
 }
 else
 {
-buf.push("<h2>" + (jade.escape(null == (jade_interp = t('import contact complete')) ? "" : jade_interp)) + "</h2>");
+buf.push("<h2><i class=\"fa fa-check\"></i><span>" + (jade.escape(null == (jade_interp = t('import contact complete')) ? "" : jade_interp)) + "</span></h2>");
 }
-buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = contacts.number + t("import amount contacts") + contacts.total) ? "" : jade_interp)) + "</p><div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((photos.numberPhotos/photos.total) * 100) + "%", true, false)) + "></div></div>");
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = contacts.number + t("import amount contacts") + contacts.total) ? "" : jade_interp)) + "</p>");
+if ( contacts.processing)
+{
+buf.push("<div" + (jade.attr("style", "height: 8px; margin-bottom: 1em; border: 1px solid rgba(0,0,0,.12); background: #33A6FF; border-radius: 20px; width: " + ((contacts.number/contacts.total) * 100) + "%", true, false)) + "></div>");
+}
+buf.push("</div>");
 }
 if ( invalidToken)
 {
-buf.push("<div class=\"error\">" + (jade.escape(null == (jade_interp = t('invalid token')) ? "" : jade_interp)) + "</div>");
+buf.push("<div class=\"error\">" + (jade.escape(null == (jade_interp = t('invalid token')) ? "" : jade_interp)) + "</div><a id=\"back-button\" href=\"/\" target=\"_top\" class=\"btn btn-secondary\">" + (jade.escape(null == (jade_interp = t('back to home')) ? "" : jade_interp)) + "</a>");
 }
 if (!( events.processing || contacts.processing || photos.processing))
 {
