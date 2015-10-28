@@ -1,6 +1,6 @@
 {
   "name": "import-from-google",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "engines": [
     "node = 0.10.x"
   ],
@@ -78,7 +78,7 @@
     "Account": {
       "description": "Add email account"
     },
-    "Tag":  {
+    "Tag": {
       "description": "Add a blue Google tag"
     }
   },
