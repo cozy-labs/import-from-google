@@ -53,5 +53,10 @@ module.exports = {
     byTitle: function(doc) {
       return emit(doc.title, doc);
     }
+  },
+  tag: {
+    byName: function(doc) {
+      return emit(doc.name, doc);
+    }
   }
 };
