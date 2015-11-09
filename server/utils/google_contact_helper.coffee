@@ -259,7 +259,7 @@ GCH.addContactPictureInCozy = (accessToken, cozyContact, gContact, done) ->
     log.debug "fetch #{GCH.extractGoogleId(gContact)} contact's picture"
 
     # timeoutID = null
-    request = https.get opts, (stream) ->
+    https.get opts, (stream) ->
         log.debug "response for #{GCH.extractGoogleId(gContact)} picture"
 
         stream.on 'error', done
