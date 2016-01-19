@@ -12,9 +12,10 @@
   },
   "main": "server.coffee",
   "dependencies": {
-    "americano": "0.3.11",
+    "americano": "0.4.2",
     "async": "^0.9.0",
-    "cozydb": "0.1.1",
+    "cozy-notifications-helper": "^1.0.2",
+    "cozydb": "0.1.9",
     "gdata-js": "3.0.1",
     "gm": "1.17.0",
     "googleapis": "2.0.2",
@@ -22,11 +23,10 @@
     "jade": "1.9.1",
     "lodash": "^3.8.0",
     "moment-timezone": "^0.3.1",
-    "printit": "0.1.9",
-    "request-json": "0.5.3",
-    "socket.io": "1.3.5",
     "node-polyglot": "^0.4.1",
-    "cozy-notifications-helper": "^1.0.2"
+    "printit": "0.1.15",
+    "request-json": "0.5.5",
+    "socket.io": "1.3.5"
   },
   "devDependencies": {
     "should": "4.0.1",
