@@ -1,7 +1,6 @@
 async = require 'async'
 realtimer = require './realtimer'
 log = require('printit')(prefix: 'contactsimport')
-im = require('imagemagick-stream')
 _ = require 'lodash'
 https = require('https')
 url = require 'url'
