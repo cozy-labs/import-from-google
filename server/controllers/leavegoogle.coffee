@@ -21,7 +21,7 @@ module.exports.index = (req, res) ->
 
 module.exports.lg = (req, res, next) ->
 
-    res.send 200
+    res.sendStatus 200
 
     {auth_code, scope} = req.body
     #scope is like this :
