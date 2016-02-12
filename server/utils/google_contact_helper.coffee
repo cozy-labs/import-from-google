@@ -10,6 +10,7 @@ module.exports = GCH = {}
 
 log = require('printit')
     date: true
+    prefix: 'utils:gch'
 
 GCH.ACCOUNT_TYPE = 'com.google'
 
@@ -400,7 +401,7 @@ GCH.updateCozyContact = (gEntry, contacts, accountName, token, callback) ->
             updateContact fromCozy, fromGoogle
 
         else # create
-            log.info "Create #{gId} contact"
+            log.info "Create contact #{gId}"
             log.debug "Create #{fromGoogle?.fn} contact"
 
             fromGoogle.revision = new Date().toISOString()

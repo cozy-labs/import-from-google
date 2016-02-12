@@ -1,6 +1,8 @@
 cozydb = require 'cozydb'
 _ = require 'lodash'
-log = require('printit')('modelAlbum')
+log = require('printit')
+    date: true
+    prefix: 'model:album'
 
 module.exports = Album = cozydb.getModel 'Album',
     id            : String
@@ -36,8 +38,9 @@ Album.createIfNotExist = (album, callback) ->
         log.debug "exist ? #{exist?}"
 
         if exist?
-            log.debug "#{album.title} already imported"
+            log.info "#{album.title} already imported"
             callback null, exist
         else
+            log.info "importing album #{album.title}"
             Album.create album, callback
 

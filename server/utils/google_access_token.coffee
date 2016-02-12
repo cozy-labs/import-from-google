@@ -1,6 +1,8 @@
 request = require 'request-json'
 querystring = require 'querystring'
-log = require('printit')(prefix: 'GAT')
+log = require('printit')
+    date: true
+    prefix: 'utils:gat'
 
 client = request.createClient 'https://www.googleapis.com/oauth2/v3/token'
 client.headers['Content-Type'] = 'application/x-www-form-urlencoded'

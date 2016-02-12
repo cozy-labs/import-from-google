@@ -2,6 +2,9 @@ americano = require 'americano'
 fs        = require 'fs'
 path      = require 'path'
 realtimer = require './utils/realtimer'
+log = require('printit')
+    date: true
+    prefix: 'config'
 
 localizationManager = require './utils/localization_manager'
 
@@ -32,7 +35,7 @@ config =
                 realtimer.set(socket)
 
             localizationManager.initialize ->
-                console.log "LocalizationManager initialized"
+                log.info "LocalizationManager initialized"
 
 
     development: [

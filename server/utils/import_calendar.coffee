@@ -2,7 +2,9 @@ async = require 'async'
 google = require 'googleapis'
 calendar = google.calendar 'v3'
 _ = require 'lodash'
-log = require('printit')(prefix: 'calendarimport')
+log = require('printit')
+    date: true
+    prefix: 'utils:calendar'
 Event = require '../models/event'
 realtimer = require './realtimer'
 localizationManager = require './localization_manager'
@@ -85,7 +87,8 @@ module.exports = (access_token, callback)->
             numberProcessed = 0
             async.eachSeries gEvents, (gEvent, next)->
                 unless Event.validGoogleEvent gEvent
-                    log.debug "invalid event"
+                    log.error "invalid event"
+                    log.error gEvent
 
                     realtimer.sendCalendar
                         number: ++numberProcessed

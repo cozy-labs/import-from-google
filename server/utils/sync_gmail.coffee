@@ -2,7 +2,9 @@ Account = require '../models/account'
 google = require 'googleapis'
 plus = google.plus('v1')
 {oauth2Client} = require './google_access_token'
-log = require('printit')(prefix: 'syncgmail')
+log = require('printit')
+    date: true
+    prefix: 'utils:gmail'
 
 
 

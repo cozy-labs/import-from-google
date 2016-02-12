@@ -4,7 +4,8 @@ async = require 'async'
 Helper = require '../utils/contact_helper'
 
 log = require('printit')
-    prefix: 'Contact Model'
+    date: true
+    prefix: 'model:contact'
 
 
 # Datapoints is an array of { name, type, value ...} objects,

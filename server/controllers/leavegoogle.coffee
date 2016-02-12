@@ -4,7 +4,9 @@ googleToken = require '../utils/google_access_token'
 importCalendar = require '../utils/import_calendar'
 importContacts = require '../utils/import_contacts'
 importPhotos = require '../utils/import_photos'
-log = require('printit')('leaveGcontroller')
+log = require('printit')
+    date: true
+    prefix: 'leave'
 realtimer = require '../utils/realtimer'
 syncGmail = require '../utils/sync_gmail'
 
@@ -32,12 +34,13 @@ module.exports.lg = (req, res, next) ->
         log.error err if err
 
         unless tokens?.access_token
-            console.log "No access token"
+            log.info "No access token"
             realtimer.sendEnd "invalid token"
             return
 
         async.series [
             (callback) ->
+                log.info "## Getting tokens"
                 syncGmail tokens.access_token, tokens.refresh_token,
                     scope.sync_gmail is 'true', (err) ->
                         log.error err if err
@@ -46,12 +49,14 @@ module.exports.lg = (req, res, next) ->
                         callback null
             (callback) ->
                 return callback null unless scope.photos is 'true'
+                log.info "## Start import of photos"
                 importPhotos tokens.access_token, (err) ->
                     realtimer.sendPhotosErr err if err
                     realtimer.sendEnd "photos.end"
                     callback null
             (callback) ->
                 return callback null unless scope.calendars is 'true'
+                log.info "## Start import of events"
                 importCalendar tokens.access_token, (err) ->
                     realtimer.sendCalendarErr err if err
                     realtimer.sendEnd "events.end"
@@ -59,15 +64,16 @@ module.exports.lg = (req, res, next) ->
 
             (callback) ->
                 return callback null unless scope.contacts is 'true'
+                log.info "## Start import of contacts"
                 importContacts tokens.access_token, (err) ->
                     realtimer.sendContactsErr err if err
                     realtimer.sendEnd "contacts.end"
                     callback null
 
         ], (err) ->
-            log.debug "import from google complete"
+            log.info "import from google complete"
             realtimer.sendEnd "ok"
-            console.log err if err
+            log.raw err if err
 
 # log client errors
 module.exports.logClient = (req, res) ->
