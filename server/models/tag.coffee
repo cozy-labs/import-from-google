@@ -1,6 +1,7 @@
 cozydb = require 'cozydb'
 log = require('printit')
-    prefix: 'tag:model'
+    date: true
+    prefix: 'model:tag'
 
 module.exports = class Tag extends cozydb.CozyModel
     @schema:

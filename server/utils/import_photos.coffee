@@ -3,7 +3,9 @@ async = require 'async'
 https = require 'https'
 im = require 'imagemagick-stream'
 pass = require('stream').PassThrough
-log = require('printit')(prefix: 'photosimport')
+log = require('printit')
+    date: true
+    prefix: 'utils:photos'
 
 gdataClient = require('gdata-js')("useless", "useless", 'http://localhost/')
 

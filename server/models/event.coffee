@@ -2,7 +2,8 @@ cozydb = require 'cozydb'
 momentTz = require 'moment-timezone'
 async = require 'async'
 log = require('printit')
-    prefix: 'event:model'
+    date: true
+    prefix: 'model:event'
 _ = require 'lodash'
 
 module.exports = Event = cozydb.getModel 'Event',
@@ -60,10 +61,10 @@ Event.createIfNotExist = (cozyEvent, callback) ->
             return event.end is cozyEvent.end and
                event.description is cozyEvent.description
         if exist
-            console.log "dont create because exist"
+            log.info "event starting on #{cozyEvent.start} already exist"
             callback()
         else
-            console.log "create"
+            log.info "create event starting on #{cozyEvent.start}"
             Event.create cozyEvent, callback
 
 
