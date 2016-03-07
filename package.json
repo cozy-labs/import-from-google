@@ -1,6 +1,6 @@
 {
   "name": "import-from-google",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "engines": [
     "node = 0.10.x"
   ],
