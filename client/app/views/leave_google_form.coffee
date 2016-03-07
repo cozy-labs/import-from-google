@@ -59,7 +59,6 @@ module.exports = class LeaveGoogleView extends BaseView
             photos: @$("input:checkbox[name=photos]").prop("checked")
             calendars: @$("input:checkbox[name=calendars]").prop("checked")
             contacts: @$("input:checkbox[name=contacts]").prop("checked")
-            sync_gmail: @$("input:checkbox[name=sync_gmail]").prop("checked")
 
         $.post "lg", {auth_code: auth_code, scope: scope}
         window.app.router.navigate 'status', true

@@ -21,7 +21,7 @@ data = {
   client_id: "260645850650-2oeufakc8ddbrn8p4o58emsl7u0r0c8s.apps.googleusercontent.com"
 };
 
-scopes = ['https://www.googleapis.com/auth/calendar.readonly', 'https://picasaweb.google.com/data/', 'https://www.googleapis.com/auth/contacts.readonly', 'email', 'https://mail.google.com/', 'profile'];
+scopes = ['https://www.googleapis.com/auth/calendar.readonly', 'https://picasaweb.google.com/data/', 'https://www.googleapis.com/auth/contacts.readonly', 'https://mail.google.com/', 'profile'];
 
 google = require('googleapis');
 

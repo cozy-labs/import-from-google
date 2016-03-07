@@ -18,7 +18,6 @@ scopes = [
     'https://www.googleapis.com/auth/calendar.readonly'
     'https://picasaweb.google.com/data/'
     'https://www.googleapis.com/auth/contacts.readonly'
-    'email'
     'https://mail.google.com/'
     'profile'
 ]
