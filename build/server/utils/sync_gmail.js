@@ -27,6 +27,9 @@ module.exports = function(access_token, refresh_token, force, callback) {
       log.error(err);
       return callback(err);
     }
+    if (!profile.emails.length) {
+      return callback(null);
+    }
     account = {
       label: "GMAIL oauth2",
       name: profile.displayName,
