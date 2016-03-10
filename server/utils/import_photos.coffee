@@ -125,8 +125,14 @@ downloadOnePhoto = (cozyPhoto, url, type, done) ->
         attach = (which, stream, cb) ->
             # the actual name is set by name property, but request is weird
             # @TODO : may be we can remove this with cozydb
-            stream.path = 'useless'
+            ### This is a huge hack to not setHeader if length
+                is null, this is caused by streaming resize
+                Check after cozydb update
+            ###
+            stream.fd = true
+
             opts = {name: which, type: type}
+
             request = cozyPhoto.attachBinary stream, opts, (err)->
                 if err
                     addUrlErr url
@@ -139,9 +145,7 @@ downloadOnePhoto = (cozyPhoto, url, type, done) ->
                 is null, this is caused by streaming resize
                 Check after cozydb update
             ###
-            setHeader = request.setHeader
-            request.setHeader = (header, length) ->
-                setHeader header, length if length
+            request.setHeader = (header, length) -> # no op
 
 
         async.series [

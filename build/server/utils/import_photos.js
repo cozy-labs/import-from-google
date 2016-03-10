@@ -160,8 +160,13 @@ downloadOnePhoto = function(cozyPhoto, url, type, done) {
     stream.pipe(screen);
     stream.pipe(raw);
     attach = function(which, stream, cb) {
-      var opts, request, setHeader;
-      stream.path = 'useless';
+
+      /* This is a huge hack to not setHeader if length
+          is null, this is caused by streaming resize
+          Check after cozydb update
+       */
+      var opts, request;
+      stream.fd = true;
       opts = {
         name: which,
         type: type
@@ -180,12 +185,7 @@ downloadOnePhoto = function(cozyPhoto, url, type, done) {
           is null, this is caused by streaming resize
           Check after cozydb update
        */
-      setHeader = request.setHeader;
-      return request.setHeader = function(header, length) {
-        if (length) {
-          return setHeader(header, length);
-        }
-      };
+      return request.setHeader = function(header, length) {};
     };
     return async.series([
       function(cb) {
