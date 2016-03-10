@@ -141,7 +141,7 @@ downloadOnePhoto = (cozyPhoto, url, type, done) ->
             ###
             setHeader = request.setHeader
             request.setHeader = (header, length) ->
-                setHeader header, length if length isnt null
+                setHeader header, length if length
 
 
         async.series [

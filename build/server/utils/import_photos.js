@@ -182,7 +182,7 @@ downloadOnePhoto = function(cozyPhoto, url, type, done) {
        */
       setHeader = request.setHeader;
       return request.setHeader = function(header, length) {
-        if (length !== null) {
+        if (length) {
           return setHeader(header, length);
         }
       };
