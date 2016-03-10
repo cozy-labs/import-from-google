@@ -1,4 +1,3 @@
-request = require 'request-json'
 async = require 'async'
 https = require 'https'
 im = require 'imagemagick-stream'
@@ -127,13 +126,23 @@ downloadOnePhoto = (cozyPhoto, url, type, done) ->
             # the actual name is set by name property, but request is weird
             # @TODO : may be we can remove this with cozydb
             stream.path = 'useless'
-            cozyPhoto.attachBinary stream, {name: which, type: type}, (err)->
+            opts = {name: which, type: type}
+            request = cozyPhoto.attachBinary stream, opts, (err)->
                 if err
                     addUrlErr url
                     log.error "#{which} #{err}"
                 else
                     log.debug "#{which} ok"
                 cb err
+
+            ### This is a huge hack to not setHeader if length
+                is null, this is caused by streaming resize
+                Check after cozydb update
+            ###
+            setHeader = request.setHeader
+            request.setHeader = (header, length) ->
+                setHeader header, length if length isnt null
+
 
         async.series [
             (cb) ->
