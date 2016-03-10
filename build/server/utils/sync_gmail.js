@@ -22,12 +22,12 @@ module.exports = function(access_token, refresh_token, force, callback) {
     userId: 'me',
     auth: oauth2Client
   }, function(err, profile) {
-    var account, email;
+    var account, email, ref;
     if (err) {
       log.error(err);
       return callback(err);
     }
-    if (!profile.emails.length) {
+    if (!(profile != null ? (ref = profile.emails) != null ? ref.length : void 0 : void 0)) {
       return callback(null);
     }
     account = {

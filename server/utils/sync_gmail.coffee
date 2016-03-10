@@ -19,7 +19,7 @@ module.exports = (access_token, refresh_token, force, callback)->
             log.error err
             return callback err
 
-        unless profile.emails.length
+        unless profile?.emails?.length
             return callback null
 
         account =
