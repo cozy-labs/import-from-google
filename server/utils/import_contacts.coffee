@@ -3,7 +3,6 @@ realtimer = require './realtimer'
 log = require('printit')
     date: true
     prefix: 'utils:contact'
-_ = require 'lodash'
 https = require('https')
 url = require 'url'
 

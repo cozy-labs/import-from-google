@@ -1,5 +1,4 @@
 cozydb = require 'cozydb'
-_ = require 'lodash'
 log = require('printit')
     date: true
     prefix: 'model:photos'
