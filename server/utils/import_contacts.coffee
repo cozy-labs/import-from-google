@@ -3,7 +3,6 @@ realtimer = require './realtimer'
 log = require('printit')
     date: true
     prefix: 'utils:contact'
-_ = require 'lodash'
 https = require('https')
 url = require 'url'
 
@@ -66,25 +65,28 @@ module.exports = (token, callback) ->
             , contacts.accountName
 
         numberProcessed = 0
-        total = contacts.google?.length
-        async.eachSeries contacts.google, (gContact, cb) ->
-            GoogleContactHelper.updateCozyContact gContact, contacts
-            , contacts.accountName, token, (err, updatedContact)->
-                numberProcessed += 1
-                realtimer.sendContacts
-                    number: numberProcessed
-                    total: total
-
-                # Throttle the async loop to prevent performance burst.
-                setTimeout -> cb err
-                , 1
-        , (err)->
-            return callback err if err
-            _ = localizationManager.t
-            notification.createOrUpdatePersistent "leave-google-contacts",
-                app: 'import-from-google'
-                text: _ 'notif_import_contact', total: total
-                resource:
-                    app: 'contacts'
-                    url: 'contacts/'
+        if not contacts.google?
             callback()
+        else
+            total = contacts.google.length
+            async.eachSeries contacts.google, (gContact, cb) ->
+                GoogleContactHelper.updateCozyContact gContact, contacts
+                , contacts.accountName, token, (err, updatedContact)->
+                    numberProcessed += 1
+                    realtimer.sendContacts
+                        number: numberProcessed
+                        total: total
+
+                    # Throttle the async loop to prevent performance burst.
+                    setTimeout -> cb err
+                    , 1
+            , (err)->
+                return callback err if err
+                _ = localizationManager.t
+                notification.createOrUpdatePersistent "leave-google-contacts",
+                    app: 'import-from-google'
+                    text: _ 'notif_import_contact', total: total
+                    resource:
+                        app: 'contacts'
+                        url: 'contacts/'
+                callback()

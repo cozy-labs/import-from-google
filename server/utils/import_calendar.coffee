@@ -1,15 +1,12 @@
 async = require 'async'
 google = require 'googleapis'
 calendar = google.calendar 'v3'
-_ = require 'lodash'
 log = require('printit')
     date: true
     prefix: 'utils:calendar'
 Event = require '../models/event'
 realtimer = require './realtimer'
 localizationManager = require './localization_manager'
-
-_ = require 'lodash'
 
 {oauth2Client} = require './google_access_token'
 
