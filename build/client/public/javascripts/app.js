@@ -6,110 +6,149 @@
 
   var modules = {};
   var cache = {};
+  var aliases = {};
   var has = ({}).hasOwnProperty;
 
-  var aliases = {};
-
-  var endsWith = function(str, suffix) {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
-  };
-
-  var unalias = function(alias, loaderPath) {
-    var start = 0;
-    if (loaderPath) {
-      if (loaderPath.indexOf('components/' === 0)) {
-        start = 'components/'.length;
-      }
-      if (loaderPath.indexOf('/', start) > 0) {
-        loaderPath = loaderPath.substring(start, loaderPath.indexOf('/', start));
+  var expRe = /^\.\.?(\/|$)/;
+  var expand = function(root, name) {
+    var results = [], part;
+    var parts = (expRe.test(name) ? root + '/' + name : name).split('/');
+    for (var i = 0, length = parts.length; i < length; i++) {
+      part = parts[i];
+      if (part === '..') {
+        results.pop();
+      } else if (part !== '.' && part !== '') {
+        results.push(part);
       }
     }
-    var result = aliases[alias + '/index.js'] || aliases[loaderPath + '/deps/' + alias + '/index.js'];
-    if (result) {
-      return 'components/' + result.substring(0, result.length - '.js'.length);
-    }
-    return alias;
+    return results.join('/');
   };
 
-  var expand = (function() {
-    var reg = /^\.\.?(\/|$)/;
-    return function(root, name) {
-      var results = [], parts, part;
-      parts = (reg.test(name) ? root + '/' + name : name).split('/');
-      for (var i = 0, length = parts.length; i < length; i++) {
-        part = parts[i];
-        if (part === '..') {
-          results.pop();
-        } else if (part !== '.' && part !== '') {
-          results.push(part);
-        }
-      }
-      return results.join('/');
-    };
-  })();
   var dirname = function(path) {
     return path.split('/').slice(0, -1).join('/');
   };
 
   var localRequire = function(path) {
-    return function(name) {
+    return function expanded(name) {
       var absolute = expand(dirname(path), name);
       return globals.require(absolute, path);
     };
   };
 
   var initModule = function(name, definition) {
-    var module = {id: name, exports: {}};
+    var hot = null;
+    hot = hmr && hmr.createHot(name);
+    var module = {id: name, exports: {}, hot: hot};
     cache[name] = module;
     definition(module.exports, localRequire(name), module);
     return module.exports;
   };
 
+  var expandAlias = function(name) {
+    return aliases[name] ? expandAlias(aliases[name]) : name;
+  };
+
+  var _resolve = function(name, dep) {
+    return expandAlias(expand(dirname(name), dep));
+  };
+
   var require = function(name, loaderPath) {
-    var path = expand(name, '.');
     if (loaderPath == null) loaderPath = '/';
-    path = unalias(name, loaderPath);
+    var path = expandAlias(name);
 
     if (has.call(cache, path)) return cache[path].exports;
     if (has.call(modules, path)) return initModule(path, modules[path]);
 
-    var dirIndex = expand(path, './index');
-    if (has.call(cache, dirIndex)) return cache[dirIndex].exports;
-    if (has.call(modules, dirIndex)) return initModule(dirIndex, modules[dirIndex]);
-
-    throw new Error('Cannot find module "' + name + '" from '+ '"' + loaderPath + '"');
+    throw new Error("Cannot find module '" + name + "' from '" + loaderPath + "'");
   };
 
   require.alias = function(from, to) {
     aliases[to] = from;
   };
 
+  var extRe = /\.[^.\/]+$/;
+  var indexRe = /\/index(\.[^\/]+)?$/;
+  var addExtensions = function(bundle) {
+    if (extRe.test(bundle)) {
+      var alias = bundle.replace(extRe, '');
+      if (!has.call(aliases, alias) || aliases[alias].replace(extRe, '') === alias + '/index') {
+        aliases[alias] = bundle;
+      }
+    }
+
+    if (indexRe.test(bundle)) {
+      var iAlias = bundle.replace(indexRe, '');
+      if (!has.call(aliases, iAlias)) {
+        aliases[iAlias] = bundle;
+      }
+    }
+  };
+
   require.register = require.define = function(bundle, fn) {
     if (typeof bundle === 'object') {
       for (var key in bundle) {
         if (has.call(bundle, key)) {
-          modules[key] = bundle[key];
+          require.register(key, bundle[key]);
         }
       }
     } else {
       modules[bundle] = fn;
+      delete cache[bundle];
+      addExtensions(bundle);
     }
   };
 
   require.list = function() {
-    var result = [];
+    var list = [];
     for (var item in modules) {
       if (has.call(modules, item)) {
-        result.push(item);
+        list.push(item);
       }
     }
-    return result;
+    return list;
   };
 
+  var hmr = globals._hmr && new globals._hmr(_resolve, require, modules, cache);
+  require._cache = cache;
+  require.hmr = hmr && hmr.wrap;
   require.brunch = true;
   globals.require = require;
 })();
-require.register("initialize", function(exports, require, module) {
+
+(function() {
+var global = window;
+var __makeRelativeRequire = function(require, mappings, pref) {
+  var none = {};
+  var tryReq = function(name, pref) {
+    var val;
+    try {
+      val = require(pref + '/node_modules/' + name);
+      return val;
+    } catch (e) {
+      if (e.toString().indexOf('Cannot find module') === -1) {
+        throw e;
+      }
+
+      if (pref.indexOf('node_modules') !== -1) {
+        var s = pref.split('/');
+        var i = s.lastIndexOf('node_modules');
+        var newPref = s.slice(0, i).join('/');
+        return tryReq(name, newPref);
+      }
+    }
+    return none;
+  };
+  return function(name) {
+    if (name in mappings) name = mappings[name];
+    if (!name) return;
+    if (name[0] !== '.' && pref) {
+      var val = tryReq(name, pref);
+      if (val !== none) return val;
+    }
+    return require(name);
+  }
+};
+require.register("initialize.coffee", function(exports, require, module) {
 var ErrorHandler, Router;
 
 ErrorHandler = require('./lib/error_helper');
@@ -151,7 +190,7 @@ $(function() {
 
 });
 
-require.register("lib/app_helpers", function(exports, require, module) {
+require.register("lib/app_helpers.coffee", function(exports, require, module) {
 (function() {
   return (function() {
     var console, dummy, method, methods, _results;
@@ -169,7 +208,7 @@ require.register("lib/app_helpers", function(exports, require, module) {
 
 });
 
-require.register("lib/base_view", function(exports, require, module) {
+require.register("lib/base_view.coffee", function(exports, require, module) {
 var BaseView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -216,7 +255,7 @@ module.exports = BaseView = (function(_super) {
 
 });
 
-require.register("lib/error_helper", function(exports, require, module) {
+require.register("lib/error_helper.coffee", function(exports, require, module) {
 exports.onerror = function(msg, url, line, col, error) {
   var data, exception, xhr;
   console.error(msg, url, line, col, error, error != null ? error.stack : void 0);
@@ -275,7 +314,7 @@ exports.catchError = function(e) {
 
 });
 
-require.register("lib/view_collection", function(exports, require, module) {
+require.register("lib/view_collection.coffee", function(exports, require, module) {
 var BaseView, ViewCollection,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -384,7 +423,7 @@ module.exports = ViewCollection = (function(_super) {
 
 });
 
-require.register("locales/en", function(exports, require, module) {
+require.register("locales/en.json", function(exports, require, module) {
 module.exports = {
   "leave google title": "Import From Google",
   "leave google intro": "This tool will import your data from Google inside your Cozy.",
@@ -422,7 +461,7 @@ module.exports = {
 ;
 });
 
-require.register("locales/fr", function(exports, require, module) {
+require.register("locales/fr.json", function(exports, require, module) {
 module.exports = {
   "leave google title": "Importer depuis Google",
   "leave google intro": "Bienvenue dans l’assistant d’import de vos données Google ! Il va vous aider à importer dans votre Cozy toutes vos données stockées chez Google.",
@@ -460,7 +499,7 @@ module.exports = {
 ;
 });
 
-require.register("router", function(exports, require, module) {
+require.register("router.coffee", function(exports, require, module) {
 var FormView, LogView, Router, mainView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -507,7 +546,7 @@ module.exports = Router = (function(_super) {
 
 });
 
-require.register("views/leave_google_form", function(exports, require, module) {
+require.register("views/leave_google_form.coffee", function(exports, require, module) {
 var BaseView, LeaveGoogleView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -605,7 +644,7 @@ module.exports = LeaveGoogleView = (function(_super) {
 
 });
 
-require.register("views/leave_google_log", function(exports, require, module) {
+require.register("views/leave_google_log.coffee", function(exports, require, module) {
 var BaseView, LeaveGoogleLogView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -737,7 +776,7 @@ module.exports = LeaveGoogleLogView = (function(_super) {
 
 });
 
-require.register("views/templates/leave_google_form", function(exports, require, module) {
+require.register("views/templates/leave_google_form.jade", function(exports, require, module) {
 var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
@@ -756,7 +795,7 @@ if (typeof define === 'function' && define.amd) {
 }
 });
 
-;require.register("views/templates/leave_google_log", function(exports, require, module) {
+;require.register("views/templates/leave_google_log.jade", function(exports, require, module) {
 var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
@@ -873,4 +912,7 @@ if (typeof define === 'function' && define.amd) {
 }
 });
 
-;
+;require.register("___globals___", function(exports, require, module) {
+  
+});})();require('___globals___');
+
