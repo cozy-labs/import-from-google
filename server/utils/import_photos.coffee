@@ -166,6 +166,7 @@ module.exports = (access_token, done)->
     log.debug "get album list"
     gdataClient.getFeed ALBUMS_URL, (err, feed) ->
         log.debug "got list err=#{err}"
+        return done err if err
         numberAlbumProcessed = 0
         numberPhotosProcessed = 0
         total = 0
