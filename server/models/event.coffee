@@ -32,7 +32,13 @@ Event.alarmTriggRegex = /(\+?|-)PT?(\d+)(W|D|H|M|S)/
 
 convertISO = (dateTimeTimezoned)->
     return false unless dateTimeTimezoned
-    return new Date(dateTimeTimezoned).toISOString()
+    try
+        res = new Date(dateTimeTimezoned).toISOString()
+    catch err
+        log.error err
+        log.error dateTimeTimezoned
+        res = false
+    return res
 
 Event.fromGoogleEvent = (gEvent) ->
     data =
