@@ -211,6 +211,9 @@ module.exports = function(access_token, done) {
   return gdataClient.getFeed(ALBUMS_URL, function(err, feed) {
     var numberAlbumProcessed;
     log.debug("got list err=" + err);
+    if (err) {
+      return done(err);
+    }
     numberAlbumProcessed = 0;
     numberPhotosProcessed = 0;
     total = 0;

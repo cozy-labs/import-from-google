@@ -64,10 +64,19 @@ Event.utcDTFormat = 'YYYY-MM-DD[T]HH:mm:00.000[Z]';
 Event.alarmTriggRegex = /(\+?|-)PT?(\d+)(W|D|H|M|S)/;
 
 convertISO = function(dateTimeTimezoned) {
+  var err, res;
   if (!dateTimeTimezoned) {
     return false;
   }
-  return new Date(dateTimeTimezoned).toISOString();
+  try {
+    res = new Date(dateTimeTimezoned).toISOString();
+  } catch (_error) {
+    err = _error;
+    log.error(err);
+    log.error(dateTimeTimezoned);
+    res = false;
+  }
+  return res;
 };
 
 Event.fromGoogleEvent = function(gEvent) {
