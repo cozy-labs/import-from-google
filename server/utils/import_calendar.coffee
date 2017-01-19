@@ -72,35 +72,49 @@ fetchCalendar = (calendarId, callback) ->
 module.exports = (access_token, callback)->
     oauth2Client.setCredentials access_token: access_token
 
-    getCalendarId (err, calendarId) ->
-        if err or not calendarId
+    calendar.calendarList.list auth: oauth2Client, (err, response) ->
+        if err
             log.error err if err
-            return callback new Error 'cant get primary calendar'
+            return callback new Error 'cant get calendar'
 
-        # @TODO fetch other calendars ?
-        fetchCalendar calendarId, (err, gEvents) ->
+        totalNumber     = 0
+        numberProcessed = 0
+        allEvents        = []
+
+        # concat all events. Needed to get the total number of events to import
+        concatEvents = (calendarItem, next) ->
+            fetchCalendar calendarItem.id, (err, gEvents) ->
+                return next err if err
+
+                allEvents = allEvents.concat gEvents
+                next null
+
+        async.eachSeries response.items, concatEvents, (err) ->
             return callback err if err
 
-            numberProcessed = 0
-            async.eachSeries gEvents, (gEvent, next)->
+            async.eachSeries allEvents, (gEvent, next)->
                 unless Event.validGoogleEvent gEvent
                     log.error "invalid event"
                     log.error gEvent
 
                     realtimer.sendCalendar
                         number: ++numberProcessed
-                        total: gEvents.length
+                        total: allEvents.length
                     next null
                 else
                     cozyEvent = Event.fromGoogleEvent gEvent
-                    cozyEvent.tags = ['google calendar']
+                    if gEvent.organizer?.displayName?
+                        tag = "(Google) #{gEvent.organizer.displayName}"
+                    else
+                        tag = 'google calendar'
+                    cozyEvent.tags = [ tag ]
                     log.debug "cozy create 1 event"
                     Event.createIfNotExist cozyEvent, (err) ->
                         return callback err if err
                         log.error err if err
                         realtimer.sendCalendar
                             number: ++numberProcessed
-                            total: gEvents.length
+                            total: allEvents.length
 
                         setTimeout next, 100
             , (err)->
@@ -108,7 +122,8 @@ module.exports = (access_token, callback)->
 
                 log.info "create notification for events"
                 _ = localizationManager.t
-                notification.createOrUpdatePersistent "leave-google-calendar",
+                notification.createOrUpdatePersistent \
+                    "leave-google-calendar",
                     app: 'import-from-google'
                     text: _ 'notif_import_event', total: numberProcessed
                     resource:
