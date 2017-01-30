@@ -99,32 +99,50 @@ module.exports = function(access_token, callback) {
   oauth2Client.setCredentials({
     access_token: access_token
   });
-  return getCalendarId(function(err, calendarId) {
-    if (err || !calendarId) {
+  return calendar.calendarList.list({
+    auth: oauth2Client
+  }, function(err, response) {
+    var allEvents, concatEvents, numberProcessed, totalNumber;
+    if (err) {
       if (err) {
         log.error(err);
       }
-      return callback(new Error('cant get primary calendar'));
+      return callback(new Error('cant get calendar'));
     }
-    return fetchCalendar(calendarId, function(err, gEvents) {
-      var numberProcessed;
+    totalNumber = 0;
+    numberProcessed = 0;
+    allEvents = [];
+    concatEvents = function(calendarItem, next) {
+      return fetchCalendar(calendarItem.id, function(err, gEvents) {
+        if (err) {
+          return next(err);
+        }
+        allEvents = allEvents.concat(gEvents);
+        return next(null);
+      });
+    };
+    return async.eachSeries(response.items, concatEvents, function(err) {
       if (err) {
         return callback(err);
       }
-      numberProcessed = 0;
-      return async.eachSeries(gEvents, function(gEvent, next) {
-        var cozyEvent;
+      return async.eachSeries(allEvents, function(gEvent, next) {
+        var cozyEvent, ref, tag;
         if (!Event.validGoogleEvent(gEvent)) {
           log.error("invalid event");
           log.error(gEvent);
           realtimer.sendCalendar({
             number: ++numberProcessed,
-            total: gEvents.length
+            total: allEvents.length
           });
           return next(null);
         } else {
           cozyEvent = Event.fromGoogleEvent(gEvent);
-          cozyEvent.tags = ['google calendar'];
+          if (((ref = gEvent.organizer) != null ? ref.displayName : void 0) != null) {
+            tag = "(Google) " + gEvent.organizer.displayName;
+          } else {
+            tag = 'google calendar';
+          }
+          cozyEvent.tags = [tag];
           log.debug("cozy create 1 event");
           return Event.createIfNotExist(cozyEvent, function(err) {
             if (err) {
@@ -135,7 +153,7 @@ module.exports = function(access_token, callback) {
             }
             realtimer.sendCalendar({
               number: ++numberProcessed,
-              total: gEvents.length
+              total: allEvents.length
             });
             return setTimeout(next, 100);
           });
